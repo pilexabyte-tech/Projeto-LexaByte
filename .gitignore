@@ -1,3 +1,84 @@
-/back
-/front
-/banco
+# ========================
+# Dependências
+# ========================
+node_modules/
+.pnp
+.pnp.js
+
+# ========================
+# Build / Dist
+# ========================
+/dist
+/build
+frontend/dist
+frontend/build
+backend/dist
+
+# ========================
+# Variáveis de Ambiente
+# ========================
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+
+# ========================
+# Logs
+# ========================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ========================
+# Cache
+# ========================
+.cache/
+.parcel-cache/
+.eslintcache
+.npm
+
+# ========================
+# Sistema Operacional
+# ========================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ========================
+# IDEs e Editores
+# ========================
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ========================
+# Banco de Dados
+# ========================
+*.sqlite
+*.sqlite3
+*.db
+
+# ========================
+# Uploads / Arquivos locais
+# ========================
+uploads/
+temp/
+
+# ========================
+# LaTeX (pasta docs/)
+# ========================
+docs/*.aux
+docs/*.log
+docs/*.out
+docs/*.toc
+docs/*.synctex.gz
+docs/*.fls
+docs/*.fdb_latexmk
+docs/*.pdf
