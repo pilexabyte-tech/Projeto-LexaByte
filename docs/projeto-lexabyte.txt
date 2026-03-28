@@ -1,0 +1,213 @@
+\documentclass[12pt]{article}
+
+% =========================
+% Pacotes
+% =========================
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{hyperref}
+
+\geometry{a4paper, margin=2.5cm}
+\onehalfspacing
+
+% =========================
+% Informações do Documento
+% =========================
+\title{\textbf{Projeto LexaByte}\\[0.3cm]
+\large SENAI}
+
+\author{ 
+LUCAS RODRIGUES DANIEL \\
+MURILO ABILA FERNANDES \\
+NÍCOLAS SILVA MACIEL \\
+SAMUEL SIQUEIRA LIMA
+}
+
+\date{Fevereiro de 2026}
+
+% =========================
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+\newpage
+
+% =========================
+\section{INTRODUÇÃO}
+
+Diante de uma sociedade que dispõe de uma quantidade praticamente infinita de conhecimento — seja ele voltado ao lazer, à aquisição de sabedoria, ao desenvolvimento profissional ou simplesmente à reflexão — observa-se um grande desafio contemporâneo: a dispersão e a desorganização das informações.
+
+Com o avanço da tecnologia e da internet, conteúdos são produzidos e compartilhados em ritmo acelerado, porém muitas vezes se encontram espalhados em diferentes plataformas, formatos e contextos, dificultando o acesso estruturado e eficiente ao saber. Essa fragmentação acaba tornando o processo de busca por conhecimento mais complexo, exigindo tempo, filtragem e critérios que nem sempre estão ao alcance de todos.
+
+Assim, apesar de vivermos na era da informação, ainda enfrentamos obstáculos significativos no que diz respeito à organização, curadoria e democratização do acesso ao conteúdo de qualidade.
+
+\subsection{Objetivo}
+
+Diante desse cenário, surge a proposta de desenvolver uma grande biblioteca digital com a capacidade de reunir, organizar e disponibilizar o máximo possível de conteúdos brasileiros em um único ambiente acessível e estruturado.
+
+O objetivo é criar um espaço que centralize diferentes formatos de informação — como vídeos, livros, imagens, cursos, artigos, materiais acadêmicos e outros recursos relevantes — promovendo não apenas o armazenamento de conteúdo, mas também sua organização inteligente e acessível para todos os públicos.
+
+Essa biblioteca digital pretende atuar como um polo de conhecimento, valorizando a produção nacional e contribuindo para o fortalecimento da educação, da cultura e do desenvolvimento social. Ao concentrar informações diversas em um único local, busca-se facilitar o aprendizado, incentivar a pesquisa e proporcionar uma experiência mais eficiente e inclusiva para toda a sociedade.
+
+Mais do que reunir conteúdos, a proposta visa agregar valor à comunidade, promovendo o acesso democrático ao conhecimento e estimulando o crescimento intelectual coletivo.
+
+% =========================
+\section{METODOLOGIA}
+
+\subsection{Visão Geral}
+
+% Descrever aqui a arquitetura geral do sistema, tecnologias utilizadas,
+% modelo de desenvolvimento e fluxo de funcionamento da plataforma.
+
+\subsection{Lista de Requisitos}
+
+% =========================
+\subsubsection{Banco de Dados}
+
+\textbf{Gestão Administrativa}
+\begin{itemize}
+    \item O sistema deve possuir área administrativa com autenticação (login).
+    \item O administrador deve poder:
+    \begin{itemize}
+        \item adicionar novos links;
+        \item editar links existentes;
+        \item remover links inválidos;
+        \item criar e editar categorias e temas.
+    \end{itemize}
+    \item O sistema deve permitir aprovação manual de conteúdos antes da publicação (moderação).
+\end{itemize}
+
+\textbf{Segurança}
+\begin{itemize}
+    \item O sistema deve possuir autenticação segura para administradores.
+    \item O sistema deve proteger contra injeção de código e acessos não autorizados.
+    \item O sistema deve utilizar HTTPS.
+\end{itemize}
+
+\textbf{Confiabilidade}
+\begin{itemize}
+    \item O sistema deve verificar periodicamente se os links permanecem ativos.
+    \item O sistema deve indicar links quebrados ou indisponíveis.
+    \item O sistema deve manter backup dos dados cadastrados.
+\end{itemize}
+
+% =========================
+\subsubsection{BackEnd}
+
+\textbf{Navegação e Busca}
+\begin{itemize}
+    \item O sistema deve possuir busca por palavras-chave.
+    \item O sistema deve permitir filtros por:
+    \begin{itemize}
+        \item categoria;
+        \item tema;
+        \item tipo de acervo;
+        \item idioma.
+    \end{itemize}
+    \item O sistema deve permitir ordenação por relevância ou popularidade.
+    \item O sistema deve apresentar os resultados de forma clara e organizada.
+\end{itemize}
+
+\textbf{Interação do Usuário (Opcional/Futuro)}
+\begin{itemize}
+    \item O sistema pode permitir que usuários sugiram novos links.
+    \item O sistema pode permitir avaliação ou comentários dos acervos.
+    \item O sistema pode permitir a criação de listas favoritas.
+\end{itemize}
+
+\textbf{Performance}
+\begin{itemize}
+    \item O sistema deve responder às buscas em até X segundos.
+    \item O sistema deve suportar múltiplos usuários simultâneos.
+    \item O sistema deve ser otimizado para carregamento rápido.
+\end{itemize}
+
+\textbf{Portabilidade}
+\begin{itemize}
+    \item O sistema deve funcionar nos principais navegadores (Chrome, Firefox, Edge e Safari).
+    \item O sistema deve ser responsivo para celulares e tablets.
+\end{itemize}
+
+% =========================
+\subsubsection{FrontEnd}
+
+\textbf{Navegação e Busca}
+\begin{itemize}
+    \item O sistema deve possuir busca por palavras-chave.
+    \item O sistema deve permitir filtros por categoria, tema, tipo de acervo e idioma.
+    \item O sistema deve permitir ordenação por relevância ou popularidade.
+    \item O sistema deve apresentar os resultados de forma clara e organizada.
+\end{itemize}
+
+\textbf{Interface do Usuário}
+\begin{itemize}
+    \item O sistema deve possuir interface intuitiva e responsiva (desktop e mobile).
+    \item O sistema deve permitir navegação por categorias (menu hierárquico).
+    \item O sistema deve exibir páginas individuais para cada acervo/link.
+\end{itemize}
+
+\textbf{Usabilidade}
+\begin{itemize}
+    \item O sistema deve ser fácil de usar por usuários leigos.
+    \item O sistema deve possuir navegação clara e consistente.
+    \item O tempo de aprendizado da plataforma deve ser mínimo.
+\end{itemize}
+
+% =========================
+\subsubsection{FullStack}
+
+\textbf{Curadoria e Organização de Conteúdos}
+\begin{itemize}
+    \item O sistema deve permitir cadastrar links de acervos digitais externos.
+    \item O sistema deve permitir classificar conteúdos por:
+    \begin{itemize}
+        \item Tema (ex.: História, Ciência, Arte, Tecnologia);
+        \item Nicho (ex.: História do Brasil, Física Quântica, Filosofia);
+        \item Tipo de acervo (biblioteca, museu, arquivo, repositório acadêmico ou multimídia).
+    \end{itemize}
+    \item O sistema deve permitir adicionar descrição textual para cada link.
+    \item O sistema deve permitir inserir metadados (autor, instituição, idioma e formato do conteúdo).
+\end{itemize}
+
+\textbf{Requisitos Legais e Éticos}
+\begin{itemize}
+    \item O sistema não deve hospedar conteúdo protegido por direitos autorais.
+    \item O sistema deve apenas redirecionar para acervos públicos ou autorizados.
+    \item O sistema deve informar claramente que os conteúdos pertencem às instituições originais.
+    \item O sistema deve respeitar a LGPD (caso haja cadastro de usuários).
+\end{itemize}
+
+\subsection{Banco de Dados}
+
+% Inserir Diagrama Entidade-Relacionamento (DER),
+% descrição das entidades, relacionamentos, restrições e ferramentas utilizadas.
+
+\subsection{Desenvolvimento do Software}
+
+% Detalhar a programação, arquitetura do sistema,
+% diagramas (caso de uso, classes, sequência) e explicações pertinentes.
+
+% =========================
+\section{RESULTADOS E DISCUSSÃO}
+
+% Onde e como foram realizados os testes?
+% Quais foram os resultados obtidos?
+% Quantos usuários participaram?
+% Houve validação com usuários reais?
+
+% =========================
+\section{CONCLUSÃO}
+
+% Resposta aos objetivos propostos.
+% Impacto do projeto.
+% Possíveis melhorias e trabalhos futuros.
+
+% =========================
+% \bibliographystyle{plain}
+% \bibliography{referencias}
+
+\end{document}
