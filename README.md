@@ -6,7 +6,7 @@
 
 ## Sobre
 
-O LexaByte é uma plataforma web voltada ao acesso e organização de conteúdo digital em português. O objetivo é centralizar materiais de leitura brasileiros em um ambiente moderno, acessível e bem estruturado.
+O LexaByte é uma plataforma web voltada ao acesso e organização de conteúdo digital em português. O objetivo é centralizar materiais de mídia brasileira em um ambiente moderno, acessível e bem estruturado.
 
 O projeto é desenvolvido em equipe como parte do curso de **Análise e Desenvolvimento de Sistemas** do SENAI Mariano Ferraz (São Paulo, SP).
 
