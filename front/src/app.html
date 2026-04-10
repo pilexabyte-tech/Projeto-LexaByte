@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LexaByte — Plataforma</title>
+<link rel="stylesheet" href="css/shared.css">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="index.html" class="nav-logo">Lexa<span>Byte</span></a>
+  <ul class="nav-links">
+    <li><a href="#" class="active">Início</a></li>
+    <li><a href="#">Filmes</a></li>
+    <li><a href="#">Séries</a></li>
+    <li><a href="#">Livros</a></li>
+  </ul>
+  <a href="login.html" class="nav-cta">Entrar</a>
+</nav>
+
+<div class="app-layout">
+
+  <!-- ===================== FEATURED ===================== -->
+  <section class="featured" aria-label="Destaque">
+    <div class="featured-img-placeholder"></div>
+    <div class="featured-bg"></div>
+    <div class="featured-content">
+      <div class="featured-badge">Em destaque</div>
+      <h1 class="featured-title">Dom Casmurro</h1>
+      <div class="featured-meta">
+        <span>Machado de Assis</span>
+        · 1899 ·
+        <span>Romance</span>
+        · Clássico Brasileiro
+      </div>
+      <p class="featured-desc">Bentinho e Capitu — uma das histórias mais discutidas da literatura brasileira. Ciúme, memória e a dúvida que nunca se resolve.</p>
+      <div class="featured-actions">
+        <button class="btn-watch">Acessar</button>
+        <button class="btn-info">Mais detalhes</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SEARCH + FILTERS ===================== -->
+  <div class="search-section">
+    <div class="search-bar" role="search">
+      <div class="search-icon">⌕</div>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="buscar filmes, séries, livros..."
+        aria-label="Buscar conteúdo"
+      >
+      <button class="search-btn" aria-label="Executar busca">Buscar</button>
+    </div>
+    <div class="filters" role="group" aria-label="Filtros de tipo">
+      <span class="filter-label">tipo:</span>
+      <button class="filter-btn active" data-filter="all">Todos</button>
+      <button class="filter-btn" data-filter="livro">Livros</button>
+      <button class="filter-btn" data-filter="filme">Filmes</button>
+      <button class="filter-btn" data-filter="serie">Séries</button>
+    </div>
+  </div>
+
+  <!-- ===================== CONTENT ===================== -->
+  <main class="content-area">
+
+    <div class="status-bar">
+      <div class="status-dot"></div>
+      plataforma ativa · conteúdo em português brasileiro
+    </div>
+
+    <!-- SEÇÃO — Em alta -->
+    <section class="content-section reveal">
+      <div class="section-header">
+        <div>
+          <div class="section-tag">curadoria</div>
+          <h2 class="section-heading">Em <em>alta</em> esta semana</h2>
+        </div>
+        <a href="#" class="see-all">Ver todos</a>
+      </div>
+      <div class="cards-grid wide">
+
+        <div class="card">
+          <div class="card-thumb">
+            <div class="card-thumb-placeholder">CANGACEIRO<br>FANTASMA</div>
+            <span class="card-type-badge">série</span>
+            <div class="card-overlay">
+              <button class="card-play">Assistir</button>
+            </div>
+          </div>
+          <div class="card-info">
+            <div class="card-title">Cangaceiro Fantasma</div>
+            <div class="card-meta">2024 · Ação · 8 ep.</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumb">
+            <div class="card-thumb-placeholder">CIDADE<br>DE DEUS</div>
+            <span class="card-type-badge">filme</span>
+            <div class="card-overlay">
+              <button class="card-play">Assistir</button>
+            </div>
+          </div>
+          <div class="card-info">
+            <div class="card-title">Cidade de Deus</div>
+            <div class="card-meta">2002 · Drama · 2h10m</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumb">
+            <div class="card-thumb-placeholder">O CORTIÇO</div>
+            <span class="card-type-badge">livro</span>
+            <div class="card-overlay">
+              <button class="card-play">Ler</button>
+            </div>
+          </div>
+          <div class="card-info">
+            <div class="card-title">O Cortiço</div>
+            <div class="card-meta">Aluísio Azevedo · 1890</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumb">
+            <div class="card-thumb-placeholder">TROPA DE<br>ELITE</div>
+            <span class="card-type-badge">filme</span>
+            <div class="card-overlay">
+              <button class="card-play">Assistir</button>
+            </div>
+          </div>
+          <div class="card-info">
+            <div class="card-title">Tropa de Elite</div>
+            <div class="card-meta">2007 · Ação · 1h55m</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumb">
+            <div class="card-thumb-placeholder">IRACEMA</div>
+            <span class="card-type-badge">livro</span>
+            <div class="card-overlay">
+              <button class="card-play">Ler</button>
+            </div>
+          </div>
+          <div class="card-info">
+            <div class="card-title">Iracema</div>
+            <div class="card-meta">José de Alencar · 1865</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <div class="divider" style="margin: 0 0 3rem;"></div>
+
+    <!-- SEÇÃO — Clássicos brasileiros -->
+    <section class="content-section reveal">
+      <div class="section-header">
+        <div>
+          <div class="section-tag">literatura</div>
+          <h2 class="section-heading"><em>Clássicos</em> brasileiros</h2>
+        </div>
+        <a href="#" class="see-all">Ver todos</a>
+      </div>
+      <div class="cards-row" role="list">
+
+        <div class="card">
+          <div class="card-thumb">
+            <div class="card-thumb-placeholder">GRANDE<br>SERTÃO</div>
+            <span class="card-type-badge">livro</span>
+            <div class="card-overlay"><button class="card-play">Ler</button></div>
+          </div>
+          <div class="card-info">
+            <div class="card-title">Grande Sertão: Veredas</div>
+            <div class="card-meta">Guimarães Rosa</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumb">
+            <div class="card-thumb-placeholder">MEMÓRIAS<br>PÓSTUMAS</div>
+            <span class="card-type-badge">livro</span>
+            <div class="card-overlay"><button class="card-play">Ler</button></div>
+          </div>
+          <div class="card-info">
+            <div class="card-title">Memórias Póstumas</div>
+            <div class="card-meta">Machado de Assis</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumb">
+            <div class="card-thumb-placeholder">A MORENINHA</div>
+            <span class="card-type-badge">livro</span>
+            <div class="card-overlay"><button class="card-play">Ler</button></div>
+          </div>
+          <div class="card-info">
+            <div class="card-title">A Moreninha</div>
+            <div class="card-meta">Joaquim Manoel</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumb">
+            <div class="card-thumb-placeholder">VIDAS<br>SECAS</div>
+            <span class="card-type-badge">livro</span>
+            <div class="card-overlay"><button class="card-play">Ler</button></div>
+          </div>
+          <div class="card-info">
+            <div class="card-title">Vidas Secas</div>
+            <div class="card-meta">Graciliano Ramos</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumb">
+            <div class="card-thumb-placeholder">CAPITÃES<br>DA AREIA</div>
+            <span class="card-type-badge">livro</span>
+            <div class="card-overlay"><button class="card-play">Ler</button></div>
+          </div>
+          <div class="card-info">
+            <div class="card-title">Capitães da Areia</div>
+            <div class="card-meta">Jorge Amado</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumb">
+            <div class="card-thumb-placeholder">A HORA<br>DA ESTRELA</div>
+            <span class="card-type-badge">livro</span>
+            <div class="card-overlay"><button class="card-play">Ler</button></div>
+          </div>
+          <div class="card-info">
+            <div class="card-title">A Hora da Estrela</div>
+            <div class="card-meta">Clarice Lispector</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <div class="divider" style="margin: 0 0 3rem;"></div>
+
+    <!-- SEÇÃO — Área do usuário (login gate) -->
+    <section class="content-section reveal" id="user-area">
+      <div class="section-header">
+        <div>
+          <div class="section-tag">área restrita</div>
+          <h2 class="section-heading">Minha <em>lista</em></h2>
+        </div>
+      </div>
+      <div class="login-gate">
+        <div class="login-gate-icon">⌗</div>
+        <div class="login-gate-title">Acesso restrito</div>
+        <p class="login-gate-sub">Faça login para salvar conteúdo, acompanhar seu progresso e acessar funcionalidades exclusivas da plataforma.</p>
+        <a href="login.html" class="btn-watch" style="margin-top: 0.5rem;">Fazer login</a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="app-footer">
+    <div class="footer-logo">Lexa<span>Byte</span></div>
+    <div class="footer-copy">© 2025 LexaByte · SENAI Mariano Ferraz · ADS</div>
+  </footer>
+
+</div><!-- /.app-layout -->
+
+<script src="js/app.js"></script>
+</body>
+</html>

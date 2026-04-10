@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LexaByte — Entrar</title>
+<link rel="stylesheet" href="css/shared.css">
+<link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+
+<div class="login-page">
+
+  <!-- ===================== PAINEL ESQUERDO ===================== -->
+  <div class="login-panel-left" aria-hidden="true">
+
+    <div class="login-brand">
+      <div class="login-brand-logo">Lexa<span>Byte</span></div>
+      <div class="login-brand-sub">SENAI Mariano Ferraz · ADS</div>
+    </div>
+
+    <div class="login-panel-quote">
+      <p class="login-quote-text">
+        O acervo digital<br>da <em>cultura brasileira</em>,<br>em um só lugar.
+      </p>
+      <div class="login-quote-caption">// plataforma lexabyte</div>
+    </div>
+
+    <div class="login-panel-stat">
+      <div class="login-stat">
+        <div class="login-stat-num">8</div>
+        <div class="login-stat-label">sprints</div>
+      </div>
+      <div class="login-stat">
+        <div class="login-stat-num">4</div>
+        <div class="login-stat-label">devs</div>
+      </div>
+      <div class="login-stat">
+        <div class="login-stat-num">BR</div>
+        <div class="login-stat-label">conteúdo</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===================== PAINEL DIREITO ===================== -->
+  <div class="login-panel-right">
+    <div class="login-form-wrap">
+
+      <h1 class="login-form-title">Bem-vindo de <em>volta</em></h1>
+      <p class="login-form-sub">Acesse sua conta para continuar.</p>
+
+      <!-- TABS -->
+      <div class="auth-tabs" role="tablist">
+        <button
+          class="auth-tab active"
+          role="tab"
+          aria-selected="true"
+          aria-controls="panel-login"
+          id="tab-login"
+          data-target="panel-login"
+        >Entrar</button>
+        <button
+          class="auth-tab"
+          role="tab"
+          aria-selected="false"
+          aria-controls="panel-cadastro"
+          id="tab-cadastro"
+          data-target="panel-cadastro"
+        >Criar conta</button>
+      </div>
+
+      <!-- PAINEL LOGIN -->
+      <div class="auth-panel active" id="panel-login" role="tabpanel" aria-labelledby="tab-login">
+        <form action="#" method="POST" novalidate>
+          <div class="field">
+            <label class="field-label" for="login-email">E-mail</label>
+            <input
+              class="field-input"
+              type="email"
+              id="login-email"
+              name="email"
+              placeholder="seu@email.com"
+              autocomplete="email"
+              required
+            >
+          </div>
+          <div class="field">
+            <label class="field-label" for="login-senha">Senha</label>
+            <input
+              class="field-input"
+              type="password"
+              id="login-senha"
+              name="senha"
+              placeholder="••••••••"
+              autocomplete="current-password"
+              required
+            >
+            <div class="field-hint">Mínimo 8 caracteres</div>
+          </div>
+          <label class="field-check">
+            <input type="checkbox" name="lembrar">
+            <span class="field-check-label">Manter conectado</span>
+          </label>
+          <button type="submit" class="btn-submit">Entrar na plataforma</button>
+        </form>
+        <div class="form-divider">ou</div>
+        <a href="app.html" class="login-back">Continuar sem login</a>
+      </div>
+
+      <!-- PAINEL CADASTRO -->
+      <div class="auth-panel" id="panel-cadastro" role="tabpanel" aria-labelledby="tab-cadastro">
+        <form action="#" method="POST" novalidate>
+          <div class="field">
+            <label class="field-label" for="cad-nome">Nome</label>
+            <input
+              class="field-input"
+              type="text"
+              id="cad-nome"
+              name="nome"
+              placeholder="Seu nome"
+              autocomplete="name"
+              required
+            >
+          </div>
+          <div class="field">
+            <label class="field-label" for="cad-email">E-mail</label>
+            <input
+              class="field-input"
+              type="email"
+              id="cad-email"
+              name="email"
+              placeholder="seu@email.com"
+              autocomplete="email"
+              required
+            >
+          </div>
+          <div class="field">
+            <label class="field-label" for="cad-senha">Senha</label>
+            <input
+              class="field-input"
+              type="password"
+              id="cad-senha"
+              name="senha"
+              placeholder="••••••••"
+              autocomplete="new-password"
+              required
+            >
+            <div class="field-hint">Mínimo 8 caracteres</div>
+          </div>
+          <label class="field-check">
+            <input type="checkbox" name="termos" required>
+            <span class="field-check-label">Concordo com os <a href="#">termos de uso</a></span>
+          </label>
+          <button type="submit" class="btn-submit">Criar conta</button>
+        </form>
+        <a href="app.html" class="login-back">Continuar sem login</a>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script src="js/login.js"></script>
+</body>
+</html>
