@@ -15,6 +15,13 @@ frontend/build
 backend/dist
 
 # ========================
+# Python
+# ========================
+**/__pycache__/
+**/*.py[cod]
+**/venv/
+
+# ========================
 # Variáveis de Ambiente
 # ========================
 .env
