@@ -66,3 +66,54 @@ if (searchInput) {
     }
   });
 }
+
+// Backend integration: fetch materiais from Django API
+const API_URL = 'http://127.0.0.1:8000/api/materiais/';
+const cardsGrid = document.querySelector('.cards-grid.wide');
+
+function formatType(tipo) {
+  return tipo ? tipo.toLowerCase() : 'outro';
+}
+
+function createMaterialCard(material) {
+  const card = document.createElement('div');
+  card.className = 'card';
+  const title = material.titulo || 'Sem título';
+  const badge = formatType(material.tipo);
+  const meta = material.autor_ou_criador || 'Sem autor';
+  const actionLabel = material.link_acesso ? 'Acessar' : 'Ver';
+
+  card.innerHTML = `
+    <div class="card-thumb">
+      <div class="card-thumb-placeholder">${title.split(' ').slice(0, 2).join(' ').toUpperCase()}</div>
+      <span class="card-type-badge">${badge}</span>
+      <div class="card-overlay">
+        <button class="card-play">${actionLabel}</button>
+      </div>
+    </div>
+    <div class="card-info">
+      <div class="card-title">${title}</div>
+      <div class="card-meta">${meta}</div>
+    </div>
+  `;
+
+  return card;
+}
+
+async function loadMaterials() {
+  if (!cardsGrid) return;
+
+  try {
+    const res = await fetch(API_URL);
+    if (!res.ok) return;
+    const data = await res.json();
+    if (!Array.isArray(data) || !data.length) return;
+
+    cardsGrid.innerHTML = '';
+    data.slice(0, 5).forEach(material => cardsGrid.appendChild(createMaterialCard(material)));
+  } catch (error) {
+    console.warn('Erro ao buscar materiais:', error);
+  }
+}
+
+loadMaterials();
