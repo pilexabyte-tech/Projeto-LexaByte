@@ -1,7 +1,10 @@
 // ============================================================
 // LEXABYTE — app.js
-// Filtros, busca e scroll reveal. Sem matrix rain, sem cursor.
+// Filtros, busca, scroll reveal e integração com componentes
 // ============================================================
+
+// Inicializa o Modal globalmente
+const modal = new Modal('app-modal');
 
 // ---- SCROLL REVEAL ----
 const reveals = document.querySelectorAll('.reveal');
@@ -96,6 +99,18 @@ function createMaterialCard(material) {
       <div class="card-meta">${meta}</div>
     </div>
   `;
+  
+  // Adiciona listener para abrir o modal ao clicar no card
+  if (material.link_acesso) {
+    const cardThumb = card.querySelector('.card-thumb');
+    cardThumb.style.cursor = 'pointer';
+    
+    cardThumb.addEventListener('click', (e) => {
+      e.preventDefault();
+      // Passa o link de acesso para o modal buscar os dados
+      modal.open(material.link_acesso);
+    });
+  }
 
   return card;
 }
