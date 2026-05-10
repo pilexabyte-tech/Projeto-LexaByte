@@ -18,7 +18,7 @@
     <li><a href="#">Séries</a></li>
     <li><a href="#">Livros</a></li>
   </ul>
-  <a href="login.html" class="nav-cta">Entrar</a>
+  <a href="login.html" id="nav-auth" class="nav-cta">Entrar</a>
 </nav>
 
 <div class="app-layout">
@@ -38,8 +38,8 @@
       </div>
       <p class="featured-desc">Bentinho e Capitu — uma das histórias mais discutidas da literatura brasileira. Ciúme, memória e a dúvida que nunca se resolve.</p>
       <div class="featured-actions">
-        <button class="btn-watch" data-modal-open data-modal-title="Dom Casmurro" data-modal-subtitle="Conteúdo exclusivo" data-modal-type="text" data-modal-text="Explore análise de personagens, trechos comentados e curiosidades sobre Machado de Assis diretamente na plataforma.">Acessar</button>
-        <button class="btn-info">Mais detalhes</button>
+        <button type="button" class="btn-watch" data-modal-open data-modal-title="Dom Casmurro" data-modal-subtitle="Conteúdo exclusivo" data-modal-type="text" data-modal-text="Explore análise de personagens, trechos comentados e curiosidades sobre Machado de Assis diretamente na plataforma.">Acessar</button>
+        <button type="button" class="btn-info">Mais detalhes</button>
       </div>
     </div>
   </section>
@@ -54,14 +54,14 @@
         placeholder="buscar filmes, séries, livros..."
         aria-label="Buscar conteúdo"
       >
-      <button class="search-btn" aria-label="Executar busca">Buscar</button>
+      <button type="button" class="search-btn" aria-label="Executar busca">Buscar</button>
     </div>
     <div class="filters" role="group" aria-label="Filtros de tipo">
       <span class="filter-label">tipo:</span>
-      <button class="filter-btn active" data-filter="all">Todos</button>
-      <button class="filter-btn" data-filter="livro">Livros</button>
-      <button class="filter-btn" data-filter="filme">Filmes</button>
-      <button class="filter-btn" data-filter="serie">Séries</button>
+      <button type="button" class="filter-btn active" data-filter="all">Todos</button>
+      <button type="button" class="filter-btn" data-filter="livro">Livros</button>
+      <button type="button" class="filter-btn" data-filter="filme">Filmes</button>
+      <button type="button" class="filter-btn" data-filter="serie">Séries</button>
     </div>
   </div>
 
@@ -82,78 +82,8 @@
         </div>
         <a href="#" class="see-all">Ver todos</a>
       </div>
-      <div class="cards-grid wide">
-
-        <div class="card">
-          <div class="card-thumb">
-            <div class="card-thumb-placeholder">CANGACEIRO<br>FANTASMA</div>
-            <span class="card-type-badge">série</span>
-            <div class="card-overlay">
-              <button class="card-play" data-modal-open data-modal-title="Cangaceiro Fantasma" data-modal-subtitle="Trailer da série" data-modal-type="video" data-modal-src="https://www.youtube.com/embed/ScMzIvxBSi4">Assistir</button>
-            </div>
-          </div>
-          <div class="card-info">
-            <div class="card-title">Cangaceiro Fantasma</div>
-            <div class="card-meta">2024 · Ação · 8 ep.</div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-thumb">
-            <div class="card-thumb-placeholder">CIDADE<br>DE DEUS</div>
-            <span class="card-type-badge">filme</span>
-            <div class="card-overlay">
-              <button class="card-play" data-modal-open data-modal-title="Cidade de Deus" data-modal-subtitle="Trailer oficial" data-modal-type="video" data-modal-src="https://www.youtube.com/embed/ScMzIvxBSi4">Assistir</button>
-            </div>
-          </div>
-          <div class="card-info">
-            <div class="card-title">Cidade de Deus</div>
-            <div class="card-meta">2002 · Drama · 2h10m</div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-thumb">
-            <div class="card-thumb-placeholder">O CORTIÇO</div>
-            <span class="card-type-badge">livro</span>
-            <div class="card-overlay">
-              <button class="card-play" data-modal-open data-modal-title="O Cortiço" data-modal-subtitle="Sinopse e curiosidades" data-modal-type="text" data-modal-text="O Cortiço explora conflitos sociais e emocionais no Brasil do século XIX. Abra para ler um resumo e ver curiosidades sobre Aluísio Azevedo." >Ler</button>
-            </div>
-          </div>
-          <div class="card-info">
-            <div class="card-title">O Cortiço</div>
-            <div class="card-meta">Aluísio Azevedo · 1890</div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-thumb">
-            <div class="card-thumb-placeholder">TROPA DE<br>ELITE</div>
-            <span class="card-type-badge">filme</span>
-            <div class="card-overlay">
-              <button class="card-play" data-modal-open data-modal-title="Tropa de Elite" data-modal-subtitle="Trailer oficial" data-modal-type="video" data-modal-src="https://www.youtube.com/embed/ScMzIvxBSi4">Assistir</button>
-            </div>
-          </div>
-          <div class="card-info">
-            <div class="card-title">Tropa de Elite</div>
-            <div class="card-meta">2007 · Ação · 1h55m</div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-thumb">
-            <div class="card-thumb-placeholder">IRACEMA</div>
-            <span class="card-type-badge">livro</span>
-            <div class="card-overlay">
-              <button class="card-play" data-modal-open data-modal-title="Iracema" data-modal-subtitle="Resumo e contexto" data-modal-type="text" data-modal-text="Iracema é um clássico romântico de José de Alencar. Veja no modal um resumo da trama e fatos sobre a obra." >Ler</button>
-            </div>
-          </div>
-          <div class="card-info">
-            <div class="card-title">Iracema</div>
-            <div class="card-meta">José de Alencar · 1865</div>
-          </div>
-        </div>
-
+      <div class="cards-grid wide" id="alta-cards">
+        <!-- Cards serão carregados dinamicamente -->
       </div>
     </section>
 
@@ -168,80 +98,8 @@
         </div>
         <a href="#" class="see-all">Ver todos</a>
       </div>
-      <div class="cards-row" role="list">
-
-        <div class="card">
-          <div class="card-thumb">
-            <div class="card-thumb-placeholder">GRANDE<br>SERTÃO</div>
-            <span class="card-type-badge">livro</span>
-            <div class="card-overlay"><button class="card-play">Ler</button></div>
-          </div>
-          <div class="card-info">
-            <div class="card-title">Grande Sertão: Veredas</div>
-            <div class="card-meta">Guimarães Rosa</div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-thumb">
-            <div class="card-thumb-placeholder">MEMÓRIAS<br>PÓSTUMAS</div>
-            <span class="card-type-badge">livro</span>
-            <div class="card-overlay"><button class="card-play">Ler</button></div>
-          </div>
-          <div class="card-info">
-            <div class="card-title">Memórias Póstumas</div>
-            <div class="card-meta">Machado de Assis</div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-thumb">
-            <div class="card-thumb-placeholder">A MORENINHA</div>
-            <span class="card-type-badge">livro</span>
-            <div class="card-overlay"><button class="card-play">Ler</button></div>
-          </div>
-          <div class="card-info">
-            <div class="card-title">A Moreninha</div>
-            <div class="card-meta">Joaquim Manoel</div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-thumb">
-            <div class="card-thumb-placeholder">VIDAS<br>SECAS</div>
-            <span class="card-type-badge">livro</span>
-            <div class="card-overlay"><button class="card-play">Ler</button></div>
-          </div>
-          <div class="card-info">
-            <div class="card-title">Vidas Secas</div>
-            <div class="card-meta">Graciliano Ramos</div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-thumb">
-            <div class="card-thumb-placeholder">CAPITÃES<br>DA AREIA</div>
-            <span class="card-type-badge">livro</span>
-            <div class="card-overlay"><button class="card-play">Ler</button></div>
-          </div>
-          <div class="card-info">
-            <div class="card-title">Capitães da Areia</div>
-            <div class="card-meta">Jorge Amado</div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-thumb">
-            <div class="card-thumb-placeholder">A HORA<br>DA ESTRELA</div>
-            <span class="card-type-badge">livro</span>
-            <div class="card-overlay"><button class="card-play">Ler</button></div>
-          </div>
-          <div class="card-info">
-            <div class="card-title">A Hora da Estrela</div>
-            <div class="card-meta">Clarice Lispector</div>
-          </div>
-        </div>
-
+      <div class="cards-row" role="list" id="classicos-cards">
+        <!-- Cards serão carregados dinamicamente -->
       </div>
     </section>
 
@@ -255,11 +113,24 @@
           <h2 class="section-heading">Minha <em>lista</em></h2>
         </div>
       </div>
-      <div class="login-gate">
+      <div class="login-gate" id="login-gate">
         <div class="login-gate-icon">⌗</div>
         <div class="login-gate-title">Acesso restrito</div>
         <p class="login-gate-sub">Faça login para salvar conteúdo, acompanhar seu progresso e acessar funcionalidades exclusivas da plataforma.</p>
         <a href="login.html" class="btn-watch" style="margin-top: 0.5rem;">Fazer login</a>
+      </div>
+      <div class="user-info" id="user-info" style="display: none;">
+        <div class="user-avatar">👤</div>
+        <div class="user-details">
+          <h3 id="user-name">Nome do Usuário</h3>
+          <p id="user-email">email@exemplo.com</p>
+        </div>
+        <div class="user-stats">
+          <div class="stat">
+            <span class="stat-number" id="user-materiais">0</span>
+            <span class="stat-label">Materiais</span>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -273,7 +144,7 @@
 
   <div class="modal-overlay" id="content-modal" aria-hidden="true">
     <div class="modal-window" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-      <button class="modal-close" aria-label="Fechar modal">×</button>
+      <button type="button" class="modal-close" aria-label="Fechar modal">×</button>
       <div class="modal-header">
         <span class="modal-badge">Conteúdo</span>
         <h2 id="modal-title" class="modal-title"></h2>

@@ -91,7 +91,8 @@ function openModal(event) {
       </div>
     `;
   } else {
-    modalBody.innerHTML = `<p>${text}</p>`;
+    modalBody.innerHTML = `<p></p>`;
+    modalBody.querySelector('p').textContent = text;
   }
 
   modalOverlay.classList.add('active');
@@ -119,3 +120,96 @@ if (modalOverlay) {
     }
   });
 }
+
+// ---- DINÂMICO: Verificação de login ----
+async function checkLoginStatus() {
+  const user = getStoredUser();
+  const navAuth = document.getElementById('nav-auth');
+  const loginGate = document.getElementById('login-gate');
+  const userInfo = document.getElementById('user-info');
+
+  if (user) {
+    // Usuário logado
+    navAuth.innerHTML = '<button id="logout-btn" class="nav-cta">Sair</button>';
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+      await logout();
+      location.reload();
+    });
+
+    loginGate.style.display = 'none';
+    userInfo.style.display = 'block';
+    document.getElementById('user-name').textContent = user.username;
+    document.getElementById('user-email').textContent = user.email;
+
+    // Carregar materiais do usuário
+    const userMateriaisResult = await getUserMateriais();
+    const count = userMateriaisResult.success ? userMateriaisResult.materiais.length : 0;
+    document.getElementById('user-materiais').textContent = count;
+  } else {
+    // Não logado
+    navAuth.innerHTML = '<a href="login.html">Entrar</a>';
+    loginGate.style.display = 'block';
+    userInfo.style.display = 'none';
+  }
+}
+
+// ---- DINÂMICO: Carregar materiais ----
+async function loadMateriais() {
+  const result = await getMateriais();
+  if (result.success) {
+    const materiais = result.materiais;
+    const altaContainer = document.getElementById('alta-cards');
+    const classicosContainer = document.getElementById('classicos-cards');
+
+    // Limpar containers
+    altaContainer.innerHTML = '';
+    classicosContainer.innerHTML = '';
+
+    materiais.forEach(material => {
+      const card = createCard(material);
+      // Para simplificar, adicionar todos em alta, ou filtrar por alguma lógica
+      // Assumir que materiais têm tipo: livro, filme, serie
+      if (material.tipo === 'livro') {
+        classicosContainer.appendChild(card);
+      } else {
+        altaContainer.appendChild(card);
+      }
+    });
+  }
+}
+
+function createCard(material) {
+  const card = document.createElement('div');
+  card.className = 'card';
+
+  const tipo = material.tipo; // slug: livro, filme, serie
+  const badgeText = tipo === 'livro' ? 'livro' : tipo === 'filme' ? 'filme' : 'série';
+
+  card.innerHTML = `
+    <div class="card-thumb">
+      <div class="card-thumb-placeholder">${material.titulo.toUpperCase().replace(' ', '<br>')}</div>
+      <span class="card-type-badge">${badgeText}</span>
+      <div class="card-overlay">
+        <button class="card-play" data-modal-open data-modal-title="${material.titulo}" data-modal-subtitle="${material.descricao || 'Descrição'}" data-modal-type="text" data-modal-text="${material.descricao || 'Conteúdo não disponível'}">${tipo === 'livro' ? 'Ler' : 'Assistir'}</button>
+      </div>
+    </div>
+    <div class="card-info">
+      <div class="card-title">${material.titulo}</div>
+      <div class="card-meta">${material.autor_ou_criador} · ${material.data_adicao ? new Date(material.data_adicao).getFullYear() : ''}</div>
+    </div>
+  `;
+
+  return card;
+}
+
+// ---- DINÂMICO: Adaptar filtros e busca para dados dinâmicos ----
+function updateFiltersAndSearch() {
+  // Os filtros e busca já funcionam com .card, então deve funcionar com cards dinâmicos
+}
+
+// Inicializar
+document.addEventListener('DOMContentLoaded', () => {
+  checkLoginStatus();
+  loadMateriais();
+  updateFiltersAndSearch();
+});
