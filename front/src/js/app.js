@@ -1,7 +1,10 @@
 // ============================================================
 // LEXABYTE — app.js
-// Filtros, busca e scroll reveal. Sem matrix rain, sem cursor.
+// Filtros, busca, scroll reveal e integração com componentes
 // ============================================================
+
+// Inicializa o Modal globalmente
+const modal = new Modal('app-modal');
 
 // ---- SCROLL REVEAL ----
 const reveals = document.querySelectorAll('.reveal');
@@ -67,149 +70,65 @@ if (searchInput) {
   });
 }
 
-const modalOverlay = document.getElementById('content-modal');
-const modalTitle = document.getElementById('modal-title');
-const modalSubtitle = document.querySelector('.modal-subtitle');
-const modalBody = document.querySelector('.modal-body');
-const modalClose = document.querySelector('.modal-close');
+// Backend integration: fetch materiais from Django API
+const API_URL = 'http://127.0.0.1:8000/api/materiais/';
+const cardsGrid = document.querySelector('.cards-grid.wide');
 
-function openModal(event) {
-  const button = event.currentTarget;
-  const title = button.dataset.modalTitle || '';
-  const subtitle = button.dataset.modalSubtitle || '';
-  const type = button.dataset.modalType || 'text';
-  const src = button.dataset.modalSrc || '';
-  const text = button.dataset.modalText || '';
-
-  modalTitle.textContent = title;
-  modalSubtitle.textContent = subtitle;
-
-  if (type === 'video' && src) {
-    modalBody.innerHTML = `
-      <div class="modal-video">
-        <iframe src="${src}" title="${title}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-      </div>
-    `;
-  } else {
-    modalBody.innerHTML = `<p></p>`;
-    modalBody.querySelector('p').textContent = text;
-  }
-
-  modalOverlay.classList.add('active');
-  modalOverlay.setAttribute('aria-hidden', 'false');
+function formatType(tipo) {
+  return tipo ? tipo.toLowerCase() : 'outro';
 }
 
-function closeModal() {
-  modalOverlay.classList.remove('active');
-  modalOverlay.setAttribute('aria-hidden', 'true');
-  modalBody.innerHTML = '';
-}
-
-document.querySelectorAll('[data-modal-open]').forEach(button => {
-  button.addEventListener('click', openModal);
-});
-
-if (modalClose) {
-  modalClose.addEventListener('click', closeModal);
-}
-
-if (modalOverlay) {
-  modalOverlay.addEventListener('click', event => {
-    if (event.target === modalOverlay) {
-      closeModal();
-    }
-  });
-}
-
-// ---- DINÂMICO: Verificação de login ----
-async function checkLoginStatus() {
-  const user = getStoredUser();
-  const navAuth = document.getElementById('nav-auth');
-  const loginGate = document.getElementById('login-gate');
-  const userInfo = document.getElementById('user-info');
-
-  if (user) {
-    // Usuário logado
-    navAuth.innerHTML = '<button id="logout-btn" class="nav-cta">Sair</button>';
-    document.getElementById('logout-btn').addEventListener('click', async () => {
-      await logout();
-      location.reload();
-    });
-
-    loginGate.style.display = 'none';
-    userInfo.style.display = 'block';
-    document.getElementById('user-name').textContent = user.username;
-    document.getElementById('user-email').textContent = user.email;
-
-    // Carregar materiais do usuário
-    const userMateriaisResult = await getUserMateriais();
-    const count = userMateriaisResult.success ? userMateriaisResult.materiais.length : 0;
-    document.getElementById('user-materiais').textContent = count;
-  } else {
-    // Não logado
-    navAuth.innerHTML = '<a href="login.html">Entrar</a>';
-    loginGate.style.display = 'block';
-    userInfo.style.display = 'none';
-  }
-}
-
-// ---- DINÂMICO: Carregar materiais ----
-async function loadMateriais() {
-  const result = await getMateriais();
-  if (result.success) {
-    const materiais = result.materiais;
-    const altaContainer = document.getElementById('alta-cards');
-    const classicosContainer = document.getElementById('classicos-cards');
-
-    // Limpar containers
-    altaContainer.innerHTML = '';
-    classicosContainer.innerHTML = '';
-
-    materiais.forEach(material => {
-      const card = createCard(material);
-      // Para simplificar, adicionar todos em alta, ou filtrar por alguma lógica
-      // Assumir que materiais têm tipo: livro, filme, serie
-      if (material.tipo === 'livro') {
-        classicosContainer.appendChild(card);
-      } else {
-        altaContainer.appendChild(card);
-      }
-    });
-  }
-}
-
-function createCard(material) {
+function createMaterialCard(material) {
   const card = document.createElement('div');
   card.className = 'card';
-
-  const tipo = material.tipo; // slug: livro, filme, serie
-  const badgeText = tipo === 'livro' ? 'livro' : tipo === 'filme' ? 'filme' : 'série';
+  const title = material.titulo || 'Sem título';
+  const badge = formatType(material.tipo);
+  const meta = material.autor_ou_criador || 'Sem autor';
+  const actionLabel = material.link_acesso ? 'Acessar' : 'Ver';
 
   card.innerHTML = `
     <div class="card-thumb">
-      <div class="card-thumb-placeholder">${material.titulo.toUpperCase().replace(' ', '<br>')}</div>
-      <span class="card-type-badge">${badgeText}</span>
+      <div class="card-thumb-placeholder">${title.split(' ').slice(0, 2).join(' ').toUpperCase()}</div>
+      <span class="card-type-badge">${badge}</span>
       <div class="card-overlay">
-        <button class="card-play" data-modal-open data-modal-title="${material.titulo}" data-modal-subtitle="${material.descricao || 'Descrição'}" data-modal-type="text" data-modal-text="${material.descricao || 'Conteúdo não disponível'}">${tipo === 'livro' ? 'Ler' : 'Assistir'}</button>
+        <button class="card-play">${actionLabel}</button>
       </div>
     </div>
     <div class="card-info">
-      <div class="card-title">${material.titulo}</div>
-      <div class="card-meta">${material.autor_ou_criador} · ${material.data_adicao ? new Date(material.data_adicao).getFullYear() : ''}</div>
+      <div class="card-title">${title}</div>
+      <div class="card-meta">${meta}</div>
     </div>
   `;
+  
+  // Adiciona listener para abrir o modal ao clicar no card
+  if (material.link_acesso) {
+    const cardThumb = card.querySelector('.card-thumb');
+    cardThumb.style.cursor = 'pointer';
+    
+    cardThumb.addEventListener('click', (e) => {
+      e.preventDefault();
+      // Passa o link de acesso para o modal buscar os dados
+      modal.open(material.link_acesso);
+    });
+  }
 
   return card;
 }
 
-// ---- DINÂMICO: Adaptar filtros e busca para dados dinâmicos ----
-function updateFiltersAndSearch() {
-  // Os filtros e busca já funcionam com .card, então deve funcionar com cards dinâmicos
+async function loadMaterials() {
+  if (!cardsGrid) return;
+
+  try {
+    const res = await fetch(API_URL);
+    if (!res.ok) return;
+    const data = await res.json();
+    if (!Array.isArray(data) || !data.length) return;
+
+    cardsGrid.innerHTML = '';
+    data.slice(0, 5).forEach(material => cardsGrid.appendChild(createMaterialCard(material)));
+  } catch (error) {
+    console.warn('Erro ao buscar materiais:', error);
+  }
 }
 
-// Inicializar
-document.addEventListener('DOMContentLoaded', () => {
-  checkLoginStatus();
-  loadMateriais();
-  updateFiltersAndSearch();
-});
+loadMaterials();

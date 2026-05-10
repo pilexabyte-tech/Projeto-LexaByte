@@ -1,0 +1,56 @@
+{% extends "admin/base_site.html" %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    :root, [data-theme="light"], [data-theme="dark"] {
+        /* O verde hacker principal */
+        --primary: #00ff41; 
+        /* Fundo escuro */
+        --body-bg: #0a0a0a; 
+        /* Cor do texto geral */
+        --body-fg: #00ff41; 
+        /* Cor do cabeçalho */
+        --header-bg: #002200; 
+        /* Fundo dos módulos */
+        --darkened-bg: #111111;
+        /* Cor dos links */
+        --link-fg: #00ff41;
+        --link-hover-color: #ffffff;
+        /* Cor dos botões (Log in, Salvar) */
+        --button-bg: #003300;
+        --button-fg: #00ff41;
+        --button-hover-bg: #00ff41;
+        --default-button-bg: #004400;
+        --default-button-hover-bg: #00ff41;
+    }
+    
+    /* Ajustes extras para o texto do cabeçalho ficar legível */
+    #header a:link, #header a:visited { 
+        color: #00ff41; 
+        font-weight: bold; 
+    }
+    .module h2, .module caption, .inline-group h2 {
+        background: #003300;
+        color: #00ff41;
+    }
+    /*CSS
+    input[type="submit"] {
+        border: 1px solid #00ff41 !important;
+        transition: 0.3s;
+    }
+    input[type="submit"]:hover {
+        color: #000000 !important; /* Deixa a letra preta quando passa o mouse */
+    }
+    /* Esconde o botão de trocar o tema (sol/lua) definitivamente */
+    #theme-toggle, 
+    .theme-toggle,
+    button[aria-label="Toggle theme"],
+    #header button {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+    }
+</style>
+{% endblock %}
