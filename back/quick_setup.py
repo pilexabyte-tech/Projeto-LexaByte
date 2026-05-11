@@ -10,7 +10,7 @@ import os
 from pathlib import Path
 
 BACKEND_DIR = Path(__file__).parent
-PYTHON_EXE = r"C:\Users\Aluno\AppData\Local\Programs\Python\Python312\python.exe"
+PYTHON_EXE = sys.executable
 
 def print_header(title):
     print("\n" + "=" * 70)
@@ -65,7 +65,6 @@ PRÓXIMOS PASSOS (execute manualmente):
     DB_PASSWORD=sua_senha
     DB_HOST=127.0.0.1
     DB_PORT=3306
-    USE_SQLITE=false
 
 2️⃣  CRIAR BANCO DE DADOS
     No MySQL/MariaDB, execute:
@@ -99,8 +98,5 @@ PRÓXIMOS PASSOS (execute manualmente):
 """)
 
 print("=" * 70)
-print("📚 Para mais informações, consulte:")
-print("   - RESUMO_MYSQL.md (resumo executivo)")
-print("   - MYSQL_SETUP.md (guia detalhado)")
-print("   - INTEGRATION_CHECKLIST.md (passo-a-passo)")
+print("📚 Consulte README.md para mais informações sobre o projeto.")
 print("=" * 70)
