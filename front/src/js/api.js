@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://127.0.0.1:8000/api';
+const API_BASE_URL = window.LEXABYTE_API_BASE_URL || 'http://127.0.0.1:8000/api';
 
 function getAuthToken() {
     return sessionStorage.getItem('authToken');
@@ -119,7 +119,7 @@ async function getUserMateriais() {
     }
 }
 
-async function createMaterial(titulo, descricao, tipo, autor_ou_criador, link_acesso = '') {
+async function createMaterial(titulo, descricao, tipo, autor_ou_criador, link_acesso = '', ano = '', genero = '') {
     try {
         const response = await fetch(`${API_BASE_URL}/materiais/`, {
             method: 'POST',
@@ -133,7 +133,11 @@ async function createMaterial(titulo, descricao, tipo, autor_ou_criador, link_ac
             }),
         });
         const data = await response.json();
-        return { success: response.ok, material: data, error: response.ok ? null : data };
+        return {
+            success: response.ok,
+            material: response.ok ? { ...data, ano, genero } : data,
+            error: response.ok ? null : data,
+        };
     } catch (error) {
         return { success: false, error: error.message };
     }

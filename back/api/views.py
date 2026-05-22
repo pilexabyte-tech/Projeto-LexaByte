@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from rest_framework import generics
+from rest_framework.permissions import AllowAny, BasePermission, IsAuthenticated
 from .models import Material, Usuario, Conteudo, Recomendacao, UsuarioConteudo
 from .serializers import (
     MaterialSerializer,
@@ -12,9 +13,30 @@ from .serializers import (
 # ============================================================
 # Material (Compatibilidade com API existente)
 # ============================================================
+class IsAutorOrAdmin(BasePermission):
+    def has_permission(self, request, view):
+        user = request.user
+        role = str(
+            getattr(user, 'role', '') or
+            getattr(user, 'papel', '') or
+            getattr(user, 'tipo', '') or
+            getattr(user, 'perfil', '')
+        ).lower()
+
+        if role in ('autor', 'admin') or user.is_staff or user.is_superuser:
+            return True
+        groups = getattr(user, 'groups', None)
+        return bool(groups and groups.filter(name__in=['autor', 'admin']).exists())
+
+
 class MaterialListCreateView(generics.ListCreateAPIView):
     queryset = Material.objects.all()
     serializer_class = MaterialSerializer
+
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [IsAuthenticated(), IsAutorOrAdmin()]
+        return [AllowAny()]
 
 
 class MaterialDetailView(generics.RetrieveUpdateDestroyAPIView):

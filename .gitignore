@@ -13,6 +13,7 @@ node_modules/
 frontend/dist
 frontend/build
 backend/dist
+front/dist
 
 # ========================
 # Python
