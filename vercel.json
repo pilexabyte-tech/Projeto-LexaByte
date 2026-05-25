@@ -1,0 +1,8 @@
+{
+  "buildCommand": "cd front && npm ci && npm run build",
+  "outputDirectory": "front/dist",
+  "installCommand": "echo 'skip root install'",
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "framework": null
+}
