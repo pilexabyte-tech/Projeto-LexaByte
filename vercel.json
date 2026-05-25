@@ -1,0 +1,8 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "front/dist",
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "installCommand": "cd front && npm ci",
+  "framework": null
+}
