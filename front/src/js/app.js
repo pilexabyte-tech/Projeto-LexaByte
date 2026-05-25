@@ -6,6 +6,73 @@
 // Inicializa o Modal globalmente
 const modal = new Modal('app-modal');
 
+// Entradas da UI usadas em vários fluxos
+const altaCards = document.getElementById('alta-cards');
+const classicosCards = document.getElementById('classicos-cards');
+const navAuth = document.getElementById('nav-auth');
+const loginGate = document.getElementById('login-gate');
+const userInfo = document.getElementById('user-info');
+const userNameEl = document.getElementById('user-name');
+const userEmailEl = document.getElementById('user-email');
+const userMateriaisEl = document.getElementById('user-materiais');
+const modalTriggerButtons = document.querySelectorAll('[data-modal-open]');
+const infoButton = document.querySelector('.btn-info');
+
+function updateAuthUI() {
+  const token = getAuthToken();
+  const user = getStoredUser();
+  const isAuthenticated = Boolean(token && user);
+
+  if (navAuth) {
+    navAuth.textContent = isAuthenticated ? 'Sair' : 'Entrar';
+    navAuth.href = isAuthenticated ? '#' : 'login.html';
+  }
+
+  if (isAuthenticated) {
+    if (loginGate) loginGate.style.display = 'none';
+    if (userInfo) userInfo.style.display = 'flex';
+    if (userNameEl) userNameEl.textContent = user.username || user.nome || 'Usuário';
+    if (userEmailEl) userEmailEl.textContent = user.email || 'email@exemplo.com';
+    if (userMateriaisEl) userMateriaisEl.textContent = '0';
+
+    if (navAuth) {
+      navAuth.addEventListener('click', async (event) => {
+        event.preventDefault();
+        await logout();
+        window.location.reload();
+      });
+    }
+  } else {
+    if (loginGate) loginGate.style.display = '';
+    if (userInfo) userInfo.style.display = 'none';
+  }
+}
+
+function openButtonModal(button) {
+  if (!button) return;
+  modal.open({
+    titulo: button.dataset.modalTitle || 'Conteúdo em destaque',
+    tipo: button.dataset.modalType || 'texto',
+    autor_ou_criador: button.dataset.modalSubtitle || 'LexaByte',
+    descricao: button.dataset.modalText || '',
+  });
+}
+
+function initFeatureButtons() {
+  modalTriggerButtons.forEach(button => {
+    button.addEventListener('click', () => openButtonModal(button));
+  });
+
+  if (infoButton) {
+    infoButton.addEventListener('click', () => {
+      const target = altaCards || document.getElementById('alta-cards');
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  }
+}
+
 // ---- SCROLL REVEAL ----
 const reveals = document.querySelectorAll('.reveal');
 if (reveals.length) {
@@ -270,4 +337,6 @@ async function loadMaterials() {
   }
 }
 
+updateAuthUI();
+initFeatureButtons();
 loadMaterials();
