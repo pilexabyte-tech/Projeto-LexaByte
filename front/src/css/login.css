@@ -326,3 +326,57 @@
   .login-panel-right { padding: 2rem 1.2rem; min-height: 100vh; }
   .login-form-wrap { max-width: 100%; }
 }
+
+/* Mobile-specific adjustments for small viewports (<=640px) */
+@media (max-width: 640px) {
+  .login-page {
+    grid-template-columns: 1fr;
+  }
+
+  .login-panel-left {
+    display: none;
+  }
+
+  .login-panel-right {
+    min-height: 100vh;
+    width: 100%;
+    padding: 0; /* reset outer padding if any */
+    box-sizing: border-box;
+  }
+
+  .login-form-wrap {
+    padding: 2rem 1.25rem;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Prevent horizontal overflow on very small devices */
+  body {
+    overflow-x: hidden;
+  }
+}
+
+
+/* ---- FORM STATUS (inline feedback) ---- */
+.form-status {
+  display: block;
+  margin-bottom: 0.75rem;
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  line-height: 1.3;
+  color: var(--text-dim);
+}
+.form-status.error {
+  color: #ff4444;
+  background: rgba(255, 68, 68, 0.06);
+  border: 1px solid rgba(255, 68, 68, 0.12);
+  padding: 0.55rem 0.75rem;
+  border-radius: 6px;
+}
+.form-status.success {
+  color: #2ea44f;
+  background: rgba(46, 164, 79, 0.06);
+  border: 1px solid rgba(46, 164, 79, 0.12);
+  padding: 0.55rem 0.75rem;
+  border-radius: 6px;
+}

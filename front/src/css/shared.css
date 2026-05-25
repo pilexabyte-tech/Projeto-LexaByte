@@ -9,6 +9,7 @@
 /* ---- TOKENS ---- */
 :root {
   --black:         #020a02;
+  --nav-h:         62px;
   --deep:          #050f05;
   --green:         #00ff41;
   --green-dim:     #00c032;

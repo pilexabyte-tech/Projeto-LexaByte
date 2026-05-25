@@ -6,8 +6,13 @@
 
 /* ---- LAYOUT ROOT ---- */
 .app-layout {
-  padding-top: 62px; /* altura da nav */
+  padding-top: var(--nav-h, 62px); /* altura da nav (manutenção via --nav-h) */
   min-height: 100vh;
+}
+
+/* Override nav height token on narrow screens so content never hides */
+@media (max-width: 768px) {
+  :root { --nav-h: 56px; }
 }
 
 /* ============================================================
