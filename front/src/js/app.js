@@ -153,8 +153,7 @@ if (searchInput) {
 }
 
 // Backend integration: fetch materiais from Django API
-const API_URL = `${API_BASE_URL}/materiais/`;
-const cardsGrid = document.querySelector('.cards-grid.wide');
+const API_URL = `${window.LEXABYTE_API_BASE_URL || 'http://127.0.0.1:8000/api'}/materiais/`;
 
 function formatType(tipo) {
   return tipo ? tipo.toLowerCase() : 'outro';
@@ -303,7 +302,8 @@ function initPublishModal() {
 
     if (result.success) {
       if (publishStatus) publishStatus.textContent = 'Conteúdo publicado com sucesso!';
-      if (cardsGrid) cardsGrid.appendChild(createMaterialCard(result.material));
+      const publishCardsGrid = document.querySelector('.cards-grid.wide');
+      if (publishCardsGrid) publishCardsGrid.appendChild(createMaterialCard(result.material));
       publishForm.reset();
       setTimeout(closePublishModal, 700);
     } else {
@@ -313,10 +313,12 @@ function initPublishModal() {
 }
 
 async function loadMaterials() {
+  const cardsGrid = document.querySelector('.cards-grid.wide');
+  const classicosGrid = document.querySelector('#classicos-cards');
   if (!cardsGrid) return;
 
   // Limpa ambos os contêineres se existirem
-  if (classicosCards) classicosCards.innerHTML = '';
+  if (classicosGrid) classicosGrid.innerHTML = '';
 
   try {
     const res = await fetch(API_URL);
@@ -329,14 +331,16 @@ async function loadMaterials() {
     data.slice(0, 5).forEach(material => cardsGrid.appendChild(createMaterialCard(material)));
 
     // Próximos 3 (índices 5..7) vão para a seção clássicos
-    if (classicosCards) {
-      data.slice(5, 8).forEach(material => classicosCards.appendChild(createMaterialCard(material)));
+    if (classicosGrid) {
+      data.slice(5, 8).forEach(material => classicosGrid.appendChild(createMaterialCard(material)));
     }
   } catch (error) {
     console.warn('Erro ao buscar materiais:', error);
   }
 }
 
-updateAuthUI();
+if (typeof getAuthToken === 'function' && typeof getStoredUser === 'function') {
+  updateAuthUI();
+}
 initFeatureButtons();
 loadMaterials();

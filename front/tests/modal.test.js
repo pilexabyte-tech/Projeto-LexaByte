@@ -29,6 +29,13 @@ function createDom() {
         }
         window.IntersectionObserver = IntersectionObserverMock;
       }
+
+      // Provide a fallback fetch to the JSDOM window before app.js executes.
+      // This prevents the app from attempting real network requests during tests.
+      window.fetch = async () => ({
+        ok: true,
+        json: async () => []
+      });
     }
   });
 
