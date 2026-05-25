@@ -86,9 +86,8 @@ if (searchInput) {
 }
 
 // Backend integration: fetch materiais from Django API
-const API_URL = 'http://127.0.0.1:8000/api/materiais/';
+const API_URL = `${API_BASE_URL}/materiais/`;
 const cardsGrid = document.querySelector('.cards-grid.wide');
-const classicosCards = document.getElementById('classicos-cards');
 
 function formatType(tipo) {
   return tipo ? tipo.toLowerCase() : 'outro';
@@ -101,7 +100,7 @@ function createMaterialCard(material) {
   card.dataset.tipo = formatType(material.tipo);
   const title = material.titulo || 'Sem título';
   const badge = formatType(material.tipo);
-  const meta = material.autor_ou_criador || 'Sem autor';
+  const meta = material.genero ? `${material.autor_ou_criador} · ${material.genero}` : material.autor_ou_criador || 'Sem autor';
   const actionLabel = material.link_acesso ? 'Acessar' : 'Ver';
 
   card.innerHTML = `
@@ -118,19 +117,132 @@ function createMaterialCard(material) {
     </div>
   `;
   
-  // Adiciona listener para abrir o modal ao clicar no card
-  if (material.link_acesso) {
-    const cardThumb = card.querySelector('.card-thumb');
+  const cardThumb = card.querySelector('.card-thumb');
+  if (cardThumb) {
     cardThumb.style.cursor = 'pointer';
-    
     cardThumb.addEventListener('click', (e) => {
       e.preventDefault();
-      // Passa o link de acesso para o modal buscar os dados
-      modal.open(material.link_acesso);
+      modal.open(material);
     });
   }
 
   return card;
+}
+
+function initPublishModal() {
+  if (!canPublishContent()) return;
+
+  const contentArea = document.querySelector('.content-area');
+  if (!contentArea) return;
+
+  const publishSection = document.createElement('section');
+  publishSection.className = 'content-section reveal visible publish-entry';
+  publishSection.innerHTML = `
+    <div class="section-header">
+      <div>
+        <div class="section-tag">publicar</div>
+        <h2 class="section-heading">Cadastrar novo <em>conteúdo</em></h2>
+      </div>
+      <button type="button" class="btn-watch" id="publish-open">Publicar conteúdo</button>
+    </div>
+  `;
+  contentArea.appendChild(publishSection);
+
+  const publishModal = document.createElement('div');
+  publishModal.id = 'publish-modal';
+  publishModal.className = 'publish-modal';
+  publishModal.setAttribute('aria-hidden', 'true');
+  publishModal.innerHTML = `
+    <div class="modal-backdrop" role="presentation"></div>
+    <div class="modal publish-modal-window" role="dialog" aria-modal="true" aria-labelledby="publish-modal-title">
+      <button type="button" class="modal-close" aria-label="Fechar modal"><span aria-hidden="true">×</span></button>
+      <div class="modal-content">
+        <div class="section-tag">publicar</div>
+        <h2 id="publish-modal-title" class="modal-title">Novo conteúdo</h2>
+        <form id="publish-form" class="publish-form">
+          <div class="field-group">
+            <label class="field">
+              <span class="field-label">Nome</span>
+              <input class="field-input" id="publish-title" type="text" placeholder="Nome do conteúdo" required>
+            </label>
+            <label class="field">
+              <span class="field-label">Descrição</span>
+              <textarea class="field-input" id="publish-description" rows="4" placeholder="Descrição do conteúdo" required></textarea>
+            </label>
+            <label class="field">
+              <span class="field-label">Criador</span>
+              <input class="field-input" id="publish-creator" type="text" placeholder="Autor ou criador" required>
+            </label>
+            <label class="field">
+              <span class="field-label">Ano de lançamento</span>
+              <input class="field-input" id="publish-year" type="number" min="0" placeholder="2025">
+            </label>
+            <label class="field">
+              <span class="field-label">Tipo de conteúdo</span>
+              <select class="field-input" id="publish-type" required>
+                <option value="">Selecione</option>
+                <option value="LIVRO">Livro</option>
+                <option value="VIDEO">Vídeo</option>
+                <option value="ARTIGO">Artigo</option>
+                <option value="CURSO">Curso</option>
+                <option value="OUTRO">Outro</option>
+              </select>
+            </label>
+            <label class="field">
+              <span class="field-label">Gênero</span>
+              <input class="field-input" id="publish-genre" type="text" placeholder="Gênero do conteúdo">
+            </label>
+          </div>
+          <button type="submit" class="btn-watch">Publicar conteúdo</button>
+          <p id="publish-status" class="form-status" aria-live="polite"></p>
+        </form>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(publishModal);
+
+  const publishForm = document.querySelector('#publish-form');
+  const publishStatus = document.querySelector('#publish-status');
+  const closePublishModal = () => {
+    publishModal.classList.remove('open');
+    publishModal.setAttribute('aria-hidden', 'true');
+  };
+
+  document.querySelector('#publish-open').addEventListener('click', () => {
+    publishModal.classList.add('open');
+    publishModal.setAttribute('aria-hidden', 'false');
+  });
+  publishModal.querySelector('.modal-close').addEventListener('click', closePublishModal);
+  publishModal.querySelector('.modal-backdrop').addEventListener('click', closePublishModal);
+
+  publishForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const titulo = document.querySelector('#publish-title').value.trim();
+    const descricao = document.querySelector('#publish-description').value.trim();
+    const criador = document.querySelector('#publish-creator').value.trim();
+    const tipo = document.querySelector('#publish-type').value;
+    const ano = document.querySelector('#publish-year').value.trim();
+    const genero = document.querySelector('#publish-genre').value.trim();
+
+    if (!titulo || !descricao || !criador || !tipo) {
+      if (publishStatus) publishStatus.textContent = 'Preencha nome, descrição, criador e tipo.';
+      return;
+    }
+
+    if (publishStatus) publishStatus.textContent = 'Enviando conteúdo...';
+
+    const result = await createMaterial(titulo, descricao, tipo, criador, '', ano, genero);
+
+    if (result.success) {
+      if (publishStatus) publishStatus.textContent = 'Conteúdo publicado com sucesso!';
+      if (cardsGrid) cardsGrid.appendChild(createMaterialCard(result.material));
+      publishForm.reset();
+      setTimeout(closePublishModal, 700);
+    } else {
+      if (publishStatus) publishStatus.textContent = `Erro ao publicar: ${result.error || 'não foi possível salvar.'}`;
+    }
+  });
 }
 
 async function loadMaterials() {
@@ -159,93 +271,3 @@ async function loadMaterials() {
 }
 
 loadMaterials();
-
-// ---- BANNER FEATURED: abrir modal a partir do botão 'Acessar' ----
-const featuredBtn = document.querySelector('.featured .btn-watch[data-modal-open]');
-if (featuredBtn) {
-  featuredBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    const btn = e.currentTarget;
-
-    const material = {
-      titulo: btn.dataset.modalTitle || '',
-      tipo: btn.dataset.modalType || 'texto',
-      descricao: btn.dataset.modalText || '',
-      autor_ou_criador: btn.dataset.modalSubtitle || '',
-      link_acesso: ''
-    };
-
-    // Usa o estado do Modal e os métodos públicos para renderizar o conteúdo
-    if (window.ModalState && typeof window.ModalState.open === 'function') {
-      ModalState.open(material);
-    }
-
-    if (modal && typeof modal.showContent === 'function') {
-      modal.showContent(material);
-      if (modal.container) modal.container.classList.add('open');
-    }
-  });
-}
-
-// Botão 'Mais detalhes' no banner: rolar até a seção 'Em alta'
-const infoBtn = document.querySelector('.featured .btn-info');
-if (infoBtn) {
-  infoBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    const target = document.getElementById('alta-cards');
-    if (target && typeof target.scrollIntoView === 'function') {
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  });
-}
-
-// ---- AUTH UI ----
-function updateAuthUI() {
-  const user = (typeof getStoredUser === 'function') ? getStoredUser() : null;
-  const token = (typeof getAuthToken === 'function') ? getAuthToken() : null;
-
-  const navAuth = document.getElementById('nav-auth');
-  const loginGate = document.getElementById('login-gate');
-  const userInfo = document.getElementById('user-info');
-  const userNameEl = document.getElementById('user-name');
-  const userEmailEl = document.getElementById('user-email');
-
-  if (user && token) {
-    if (navAuth) {
-      navAuth.textContent = 'Sair';
-      navAuth.removeAttribute('href');
-      navAuth.style.cursor = 'pointer';
-      navAuth.onclick = async (e) => {
-        e.preventDefault();
-        if (typeof logout === 'function') {
-          await logout();
-        } else {
-          sessionStorage.removeItem('authToken');
-          sessionStorage.removeItem('user');
-        }
-        window.location.href = 'login.html';
-      };
-    }
-
-    if (loginGate) loginGate.style.display = 'none';
-    if (userInfo) userInfo.style.display = 'flex';
-    if (userNameEl) userNameEl.textContent = user.username || '';
-    if (userEmailEl) userEmailEl.textContent = user.email || '';
-  } else {
-    if (navAuth) {
-      navAuth.textContent = 'Entrar';
-      navAuth.setAttribute('href', 'login.html');
-      navAuth.style.cursor = '';
-      navAuth.onclick = null;
-    }
-    if (loginGate) loginGate.style.display = '';
-    if (userInfo) userInfo.style.display = 'none';
-  }
-}
-
-// Chama imediatamente ou quando o DOM estiver pronto
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', updateAuthUI);
-} else {
-  updateAuthUI();
-}

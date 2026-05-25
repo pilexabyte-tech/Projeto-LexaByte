@@ -691,6 +691,89 @@
   color: var(--text);
 }
 
+.publish-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.publish-modal.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.publish-modal-window {
+  max-width: 680px;
+}
+
+.publish-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.field-group {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.field:nth-child(2) {
+  grid-column: 1 / -1;
+}
+
+.field-label {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  color: var(--green-dim);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.field-input {
+  width: 100%;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text);
+  font: inherit;
+  padding: 0.75rem 0.85rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.field-input:focus {
+  border-color: var(--green-dim);
+  box-shadow: 0 0 0 1px var(--green-faint);
+}
+
+.field-input::placeholder {
+  color: var(--text-muted);
+}
+
+textarea.field-input {
+  resize: vertical;
+}
+
+.form-status {
+  min-height: 1.2rem;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+}
+
 /* Loading State */
 .modal-loading {
   display: flex;
@@ -917,6 +1000,10 @@
   
   .modal-actions {
     flex-direction: column;
+  }
+
+  .field-group {
+    grid-template-columns: 1fr;
   }
 }
 

@@ -87,35 +87,18 @@ class Modal {
     });
   }
   
-  async open(mediaLink) {
+  open(material) {
+    if (!material) {
+      this.showError('Material inválido ou indisponível.');
+      this.container.classList.add('open');
+      return;
+    }
+
     ModalState.setLoading();
     this.showLoading();
-    
-    try {
-      // Buscar dados do backend usando o link de mídia
-      const response = await fetch(
-        `http://127.0.0.1:8000/api/materiais/buscar/por-link/?link_acesso=${encodeURIComponent(mediaLink)}`
-      );
-      
-      if (!response.ok) {
-        throw new Error(`Erro na requisição: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      
-      // Se for um array, pega o primeiro item
-      const material = Array.isArray(data) ? data[0] : data;
-      
-      ModalState.open(material);
-      this.showContent(material);
-      this.container.classList.add('open');
-      
-    } catch (error) {
-      console.error('Erro ao buscar material:', error);
-      ModalState.open(null);
-      this.showError(`Erro ao carregar material: ${error.message}`);
-      this.container.classList.add('open');
-    }
+    ModalState.open(material);
+    this.showContent(material);
+    this.container.classList.add('open');
   }
   
   showLoading() {
@@ -145,6 +128,8 @@ class Modal {
     const formattedDate = material.data_adicao 
       ? new Date(material.data_adicao).toLocaleDateString('pt-BR')
       : 'Data não disponível';
+    const releaseYear = material.ano || material.ano_lancamento || 'Não informado';
+    const genero = material.genero || 'Não informado';
     
     this.modalBody.innerHTML = `
       <div class="modal-material">
@@ -155,10 +140,25 @@ class Modal {
         
         <div class="material-details">
           <div class="detail-row">
-            <span class="detail-label">Autor/Criador:</span>
+            <span class="detail-label">Nome:</span>
+            <span class="detail-value">${this.escapeHtml(material.titulo)}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Tipo:</span>
+            <span class="detail-value">${this.escapeHtml(material.tipo)}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Criador:</span>
             <span class="detail-value">${this.escapeHtml(material.autor_ou_criador)}</span>
           </div>
-          
+          <div class="detail-row">
+            <span class="detail-label">Ano de lançamento:</span>
+            <span class="detail-value">${this.escapeHtml(releaseYear)}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Gênero:</span>
+            <span class="detail-value">${this.escapeHtml(genero)}</span>
+          </div>
           <div class="detail-row">
             <span class="detail-label">Descrição:</span>
             <span class="detail-value">${this.escapeHtml(material.descricao)}</span>
