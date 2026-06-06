@@ -1,4 +1,4 @@
-const API_BASE_URL = window.LEXABYTE_API_BASE_URL || 'http://127.0.0.1:8000/api';
+const API_BASE_URL = window.LEXABYTE_API_BASE_URL || 'https://projeto-lexabyte-production.up.railway.app/api';
 
 function getAuthToken() {
     return sessionStorage.getItem('authToken');

@@ -35,7 +35,7 @@ def env_list(name, default=''):
     return [item.strip() for item in os.environ.get(name, default).split(',') if item.strip()]
 
 
-ALLOWED_HOSTS = env_list('ALLOWED_HOSTS', 'localhost,127.0.0.1')
+ALLOWED_HOSTS = env_list('ALLOWED_HOSTS', 'localhost,127.0.0.1,projeto-lexabyte-production.up.railway.app')
 
 
 # Application definition
@@ -133,7 +133,7 @@ USE_TZ = True
 
 
 # CORS Configuration
-CORS_ALLOWED_ORIGINS = env_list('CORS_ALLOWED_ORIGINS')
+CORS_ALLOWED_ORIGINS = env_list('CORS_ALLOWED_ORIGINS', 'https://projeto-lexabyte-production.up.railway.app')
 
 if DEBUG:
     CORS_ALLOWED_ORIGINS += [

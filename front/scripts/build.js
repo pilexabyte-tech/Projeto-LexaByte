@@ -4,7 +4,7 @@ const path = require('path');
 const rootDir = path.resolve(__dirname, '..');
 const srcDir = path.join(rootDir, 'src');
 const distDir = path.join(rootDir, 'dist');
-const apiBaseUrl = process.env.LEXABYTE_API_BASE_URL || 'http://127.0.0.1:8000/api';
+const apiBaseUrl = process.env.LEXABYTE_API_BASE_URL || 'https://projeto-lexabyte-production.up.railway.app/api';
 
 fs.rmSync(distDir, { recursive: true, force: true });
 fs.cpSync(srcDir, distDir, { recursive: true });
