@@ -36,10 +36,10 @@ const registerForm = document.querySelector('#panel-cadastro form');
 if (loginForm) {
   loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const email = document.querySelector('#login-email').value;
-    const senha = document.querySelector('#login-senha').value;
+    const username = document.querySelector('#login-email').value;
+    const password = document.querySelector('#login-senha').value;
     
-    const result = await login(email, senha);
+    const result = await login(username, password);
     const status = getOrCreateStatus(loginForm);
     if (result.success) {
       // sucesso: redireciona sem alert
@@ -55,9 +55,9 @@ if (registerForm) {
     e.preventDefault();
     const nome = document.querySelector('#cad-nome').value;
     const email = document.querySelector('#cad-email').value;
-    const senha = document.querySelector('#cad-senha').value;
+    const password = document.querySelector('#cad-senha').value;
     
-    const result = await register(nome, email, senha);
+    const result = await register(nome, email, password);
     const status = getOrCreateStatus(registerForm);
     if (result.success) {
       showStatusSuccess(status, 'Conta criada! Faça login agora.');

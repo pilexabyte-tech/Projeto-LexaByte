@@ -26,6 +26,60 @@ class UsuarioSerializer(serializers.ModelSerializer):
 
 
 # ============================================================
+# Login
+# ============================================================
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField(write_only=True)
+
+    def validate(self, data):
+        username = data.get('username')
+        password = data.get('password')
+        
+        try:
+            # Tenta buscar por login ou por email
+            usuario = Usuario.objects.filter(login=username).first() or Usuario.objects.filter(email=username).first()
+            if not usuario:
+                raise serializers.ValidationError('Invalid credentials')
+            if usuario.senha != password:
+                raise serializers.ValidationError('Invalid credentials')
+        except Usuario.DoesNotExist:
+            raise serializers.ValidationError('Invalid credentials')
+        
+        return {'usuario': usuario}
+
+
+# ============================================================
+# Register
+# ============================================================
+class RegisterSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
+    nome = serializers.CharField(required=False)
+
+    def validate(self, data):
+        username = data.get('username')
+        email = data.get('email')
+        
+        if Usuario.objects.filter(login=username).exists():
+            raise serializers.ValidationError('Username already exists')
+        if Usuario.objects.filter(email=email).exists():
+            raise serializers.ValidationError('Email already exists')
+        
+        return data
+
+    def create(self, validated_data):
+        usuario = Usuario.objects.create(
+            nome=validated_data.get('nome', validated_data['username']),
+            login=validated_data['username'],
+            email=validated_data['email'],
+            senha=validated_data['password']
+        )
+        return usuario
+
+
+# ============================================================
 # Conteudo
 # ============================================================
 class ConteudoSerializer(serializers.ModelSerializer):
