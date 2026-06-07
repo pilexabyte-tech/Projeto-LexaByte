@@ -35,7 +35,7 @@ def env_list(name, default=''):
     return [item.strip() for item in os.environ.get(name, default).split(',') if item.strip()]
 
 
-ALLOWED_HOSTS = env_list('ALLOWED_HOSTS', 'localhost,127.0.0.1,projeto-lexabyte-production.up.railway.app')
+ALLOWED_HOSTS = env_list('ALLOWED_HOSTS', 'localhost,127.0.0.1,projeto-lexabyte-production.up.railway.app,.railway.app')
 
 
 # Application definition
@@ -133,7 +133,7 @@ USE_TZ = True
 
 
 # CORS Configuration
-CORS_ALLOWED_ORIGINS = env_list('CORS_ALLOWED_ORIGINS', 'https://projeto-lexabyte-production.up.railway.app')
+CORS_ALLOWED_ORIGINS = env_list('CORS_ALLOWED_ORIGINS', 'https://projeto-lexabyte.vercel.app')
 
 if DEBUG:
     CORS_ALLOWED_ORIGINS += [
@@ -144,6 +144,12 @@ if DEBUG:
         "http://localhost:8080",
         "http://127.0.0.1:8080",
     ]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://projeto-lexabyte.vercel.app",
+    "https://projeto-lexabyte-production.up.railway.app",
+]
+
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
