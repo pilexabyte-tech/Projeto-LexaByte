@@ -60,11 +60,7 @@ PRÓXIMOS PASSOS (execute manualmente):
 1️⃣  CONFIGURAR CREDENCIAIS
     Edite o arquivo .env com suas credenciais MySQL:
     
-    DB_NAME=lexabyte
-    DB_USER=root
-    DB_PASSWORD=sua_senha
-    DB_HOST=127.0.0.1
-    DB_PORT=3306
+    MYSQL_URL=mysql://usuario:senha@host:3306/banco
 
 2️⃣  CRIAR BANCO DE DADOS
     No MySQL/MariaDB, execute:

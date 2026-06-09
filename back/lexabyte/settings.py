@@ -63,13 +63,26 @@ WSGI_APPLICATION = 'lexabyte.wsgi.application'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-DATABASES = {
-    'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL', 'postgres://postgres:postgres@localhost:5432/lexabyte'),
-        conn_max_age=600,
-        ssl_require=not DEBUG,
-    )
-}
+MYSQL_URL = os.environ.get('MYSQL_URL') or os.environ.get('DATABASE_URL')
+
+if not DEBUG and not MYSQL_URL:
+    raise RuntimeError('MYSQL_URL is required in production')
+
+if MYSQL_URL:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=MYSQL_URL,
+            conn_max_age=600,
+            ssl_require=not DEBUG,
+        )
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {
