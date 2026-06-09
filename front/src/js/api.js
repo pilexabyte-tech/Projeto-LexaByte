@@ -32,12 +32,13 @@ async function login(username, password) {
     }
 }
 
-async function register(username, email, password) {
+async function register(nome, email, password) {
     try {
+        const username = email.includes('@') ? email.split('@')[0] : email;
         const response = await fetch(`${API_BASE_URL}/register/`, {
             method: 'POST',
             headers: getHeaders(false),
-            body: JSON.stringify({ username, email, password }),
+            body: JSON.stringify({ username, email, password, nome }),
         });
         const data = await response.json();
         if (response.ok) {

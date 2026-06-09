@@ -6,7 +6,8 @@ from pathlib import Path
 
 # Configuração
 PORT = 5500
-FRONT_END_DIR = r"c:\Users\Aluno\Downloads\Projeto-LexaByte\front\src"
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+FRONT_END_DIR = PROJECT_ROOT / "front" / "src"
 
 class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):

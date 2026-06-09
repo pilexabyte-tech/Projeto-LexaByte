@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.contrib.auth.hashers import check_password, make_password
 from .models import Material, Usuario, Conteudo, Recomendacao, UsuarioConteudo
 
 
@@ -15,14 +16,22 @@ class MaterialSerializer(serializers.ModelSerializer):
 # Usuario
 # ============================================================
 class UsuarioSerializer(serializers.ModelSerializer):
+    senha = serializers.CharField(write_only=True)
+
     class Meta:
         model = Usuario
-        fields = ['id_usuario', 'nome', 'login', 'email', 'criado_em']
+        fields = ['id_usuario', 'nome', 'login', 'senha', 'email', 'criado_em']
         read_only_fields = ['id_usuario', 'criado_em']
 
     def create(self, validated_data):
-        # Em produção, fazer hashing da senha com bcrypt
+        validated_data['senha'] = make_password(validated_data['senha'])
         return Usuario.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        senha = validated_data.pop('senha', None)
+        if senha is not None:
+            instance.senha = make_password(senha)
+        return super().update(instance, validated_data)
 
 
 # ============================================================
@@ -41,7 +50,7 @@ class LoginSerializer(serializers.Serializer):
             usuario = Usuario.objects.filter(login=username).first() or Usuario.objects.filter(email=username).first()
             if not usuario:
                 raise serializers.ValidationError('Invalid credentials')
-            if usuario.senha != password:
+            if not check_password(password, usuario.senha) and usuario.senha != password:
                 raise serializers.ValidationError('Invalid credentials')
         except Usuario.DoesNotExist:
             raise serializers.ValidationError('Invalid credentials')
@@ -74,7 +83,7 @@ class RegisterSerializer(serializers.Serializer):
             nome=validated_data.get('nome', validated_data['username']),
             login=validated_data['username'],
             email=validated_data['email'],
-            senha=validated_data['password']
+            senha=make_password(validated_data['password'])
         )
         return usuario
 

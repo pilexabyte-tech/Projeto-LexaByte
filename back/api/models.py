@@ -7,7 +7,11 @@ class Usuario(models.Model):
     id_usuario = models.AutoField(primary_key=True, db_column='ID_Usuario')
     nome = models.CharField(max_length=100, db_column='Nome')
     login = models.CharField(max_length=100, unique=True, db_column='Login')
-    senha = models.CharField(max_length=255, db_column='Senha')
+    senha = models.CharField(
+        max_length=255,
+        db_column='Senha',
+        help_text='Senha armazenada com hash.',
+    )
     email = models.EmailField(max_length=150, blank=True, null=True, unique=True, db_column='Email')
     criado_em = models.DateTimeField(auto_now_add=True, db_column='Criado_em')
 

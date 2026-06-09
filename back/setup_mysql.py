@@ -5,6 +5,12 @@ Instala dependências e configura Django
 """
 import subprocess
 import sys
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+BACK_DIR = REPO_ROOT / "back"
+SQL_SOURCE = REPO_ROOT / "bd" / "lexabyte_mysql.sql"
+SQL_DEST = BACK_DIR / "lexabyte_mysql.sql"
 
 print("=" * 60)
 print("🔧 LexaByte MySQL Setup")
@@ -34,10 +40,7 @@ except Exception as e:
 print("\n[2/3] Copiando arquivo lexabyte_mysql.sql...")
 import shutil
 try:
-    shutil.copy(
-        r"c:\Users\Aluno\Downloads\lexabyte_mysql.sql",
-        r"c:\Users\Aluno\Downloads\Lexabyte Back-End\lexabyte_mysql.sql"
-    )
+    shutil.copy(SQL_SOURCE, SQL_DEST)
     print("✓ SQL schema copiado")
 except Exception as e:
     print(f"⚠ Não foi possível copiar SQL: {e}")

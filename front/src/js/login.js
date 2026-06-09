@@ -36,7 +36,7 @@ const registerForm = document.querySelector('#panel-cadastro form');
 if (loginForm) {
   loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const username = document.querySelector('#login-email').value;
+    const username = document.querySelector('#login-email').value.trim();
     const password = document.querySelector('#login-senha').value;
     
     const result = await login(username, password);
@@ -53,8 +53,8 @@ if (loginForm) {
 if (registerForm) {
   registerForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const nome = document.querySelector('#cad-nome').value;
-    const email = document.querySelector('#cad-email').value;
+    const nome = document.querySelector('#cad-nome').value.trim();
+    const email = document.querySelector('#cad-email').value.trim();
     const password = document.querySelector('#cad-senha').value;
     
     const result = await register(nome, email, password);
