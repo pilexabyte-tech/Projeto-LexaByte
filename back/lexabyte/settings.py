@@ -63,10 +63,24 @@ WSGI_APPLICATION = 'lexabyte.wsgi.application'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MYSQL_URL = os.environ.get('MYSQL_URL') or os.environ.get('DATABASE_URL')
+def build_mysql_url():
+    mysql_url = os.environ.get('MYSQL_URL') or os.environ.get('DATABASE_URL')
+    if mysql_url:
+        return mysql_url
 
-if not DEBUG and not MYSQL_URL:
-    raise RuntimeError('MYSQL_URL is required in production')
+    mysql_host = os.environ.get('MYSQLHOST') or os.environ.get('MYSQL_HOST')
+    if not mysql_host:
+        return None
+
+    mysql_user = os.environ.get('MYSQLUSER') or os.environ.get('MYSQL_USER') or 'root'
+    mysql_password = os.environ.get('MYSQLPASSWORD') or os.environ.get('MYSQL_PASSWORD') or ''
+    mysql_port = os.environ.get('MYSQLPORT') or os.environ.get('MYSQL_PORT') or '3306'
+    mysql_db = os.environ.get('MYSQLDATABASE') or os.environ.get('MYSQL_DB') or 'railway'
+
+    return f'mysql://{mysql_user}:{mysql_password}@{mysql_host}:{mysql_port}/{mysql_db}'
+
+
+MYSQL_URL = build_mysql_url()
 
 if MYSQL_URL:
     DATABASES = {
