@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from django.contrib.auth.hashers import check_password, make_password
 from .models import Material, Usuario, Conteudo, Recomendacao, UsuarioConteudo
 
 
@@ -9,29 +8,28 @@ from .models import Material, Usuario, Conteudo, Recomendacao, UsuarioConteudo
 class MaterialSerializer(serializers.ModelSerializer):
     class Meta:
         model = Material
-        fields = '__all__'
+        fields = [
+            'titulo',
+            'descricao',
+            'tipo',
+            'autor_ou_criador',
+            'link_acesso',
+            'data_adicao'
+        ]
 
 
 # ============================================================
 # Usuario
 # ============================================================
 class UsuarioSerializer(serializers.ModelSerializer):
-    senha = serializers.CharField(write_only=True)
-
     class Meta:
         model = Usuario
-        fields = ['id_usuario', 'nome', 'login', 'senha', 'email', 'criado_em']
+        fields = ['id_usuario', 'nome', 'login', 'email', 'criado_em']
         read_only_fields = ['id_usuario', 'criado_em']
 
     def create(self, validated_data):
-        validated_data['senha'] = make_password(validated_data['senha'])
+        # Em produção, fazer hashing da senha com bcrypt
         return Usuario.objects.create(**validated_data)
-
-    def update(self, instance, validated_data):
-        senha = validated_data.pop('senha', None)
-        if senha is not None:
-            instance.senha = make_password(senha)
-        return super().update(instance, validated_data)
 
 
 # ============================================================
@@ -42,17 +40,14 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True)
 
     def validate(self, data):
-        username = data.get('username')
-        password = data.get('password')
-        
-        try:
-            # Tenta buscar por login ou por email
-            usuario = Usuario.objects.filter(login=username).first() or Usuario.objects.filter(email=username).first()
-            if not usuario:
-                raise serializers.ValidationError('Invalid credentials')
-            if not check_password(password, usuario.senha) and usuario.senha != password:
-                raise serializers.ValidationError('Invalid credentials')
-        except Usuario.DoesNotExist:
+        username = (data.get('username') or '').strip()
+        password = data.get('password') or ''
+
+        # Tenta buscar por login ou por email, sem diferenciar maiúsculas/minúsculas
+        usuario = Usuario.objects.filter(login__iexact=username).first() or Usuario.objects.filter(email__iexact=username).first()
+        if not usuario:
+            raise serializers.ValidationError('Invalid credentials')
+        if usuario.senha != password:
             raise serializers.ValidationError('Invalid credentials')
         
         return {'usuario': usuario}
@@ -68,12 +63,12 @@ class RegisterSerializer(serializers.Serializer):
     nome = serializers.CharField(required=False)
 
     def validate(self, data):
-        username = data.get('username')
-        email = data.get('email')
+        username = (data.get('username') or '').strip()
+        email = (data.get('email') or '').strip()
         
-        if Usuario.objects.filter(login=username).exists():
+        if Usuario.objects.filter(login__iexact=username).exists():
             raise serializers.ValidationError('Username already exists')
-        if Usuario.objects.filter(email=email).exists():
+        if Usuario.objects.filter(email__iexact=email).exists():
             raise serializers.ValidationError('Email already exists')
         
         return data
@@ -81,9 +76,9 @@ class RegisterSerializer(serializers.Serializer):
     def create(self, validated_data):
         usuario = Usuario.objects.create(
             nome=validated_data.get('nome', validated_data['username']),
-            login=validated_data['username'],
-            email=validated_data['email'],
-            senha=make_password(validated_data['password'])
+            login=validated_data['username'].strip(),
+            email=validated_data['email'].strip(),
+            senha=validated_data['password']
         )
         return usuario
 
