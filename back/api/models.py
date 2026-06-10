@@ -54,6 +54,8 @@ class Conteudo(models.Model):
     titulo = models.CharField(max_length=255, db_column='Titulo')
     descricao = models.TextField(blank=True, null=True, db_column='Descricao')
     capa_url = models.CharField(max_length=500, blank=True, null=True, db_column='Capa_URL')
+    # NOVIDADE AQUI: O link agora é uma propriedade global de qualquer Conteúdo!
+    link = models.CharField(max_length=500, blank=True, null=True, db_column='Link')
     ano = models.IntegerField(blank=True, null=True, db_column='Ano')
     criado_em = models.DateTimeField(auto_now_add=True, db_column='Criado_em')
 
@@ -71,7 +73,7 @@ class Recomendacao(models.Model):
     id_recomendacao = models.AutoField(primary_key=True, db_column='idRecomendacao')
     conteudo = models.ForeignKey(Conteudo, on_delete=models.CASCADE, db_column='idConteudo')
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, db_column='idUsuario')
-    link = models.CharField(max_length=500, blank=True, null=True, db_column='Link')
+    # O campo 'link' foi removido daqui pois agora pertence ao Conteudo de forma geral
     criado_em = models.DateTimeField(auto_now_add=True, db_column='Criado_em')
 
     class Meta:
