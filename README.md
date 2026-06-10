@@ -47,8 +47,7 @@ no **SENAI Mariano Ferraz — São Paulo, SP**.
   ┌──────────────────────────────────────────────────────┐
   │  LAYER            TECHNOLOGY          STATUS         │
   ├──────────────────────────────────────────────────────┤
-  │  Front-end   →    React               [ CONCLUÍDO ]  │
-  │  Back-end    →    Node.js             [ CONCLUÍDO ]  │
+  │  Back-end    →    Django              [ CONCLUÍDO ]  │
   │  Database    →    MySQL               [ CONCLUÍDO ]  │
   │  Docs        →    LaTeX               [ CONCLUÍDO ]  │
   │  Version     →    Git / GitHub        [ CONCLUÍDO ]  │
@@ -64,12 +63,12 @@ Arquitetura **three-tier** com separação clara entre apresentação, lógica d
 ```
   ╔═══════════════════════════════════════╗
   ║  [ PRESENTATION ]                     ║
-  ║  React  ·  Interface Web              ║
+  ║         ·  Interface Web              ║
   ╚══════════════════╤════════════════════╝
                      │  HTTP / REST
   ╔══════════════════▼════════════════════╗
   ║  [ BUSINESS LOGIC ]                   ║
-  ║  Node.js  ·  API REST                 ║
+  ║  Django   ·  API REST                 ║
   ╚══════════════════╤════════════════════╝
                      │  Query / ORM
   ╔══════════════════▼════════════════════╗
@@ -88,7 +87,7 @@ Arquitetura **three-tier** com separação clara entre apresentação, lógica d
   ├── docs/               # documentação técnica (LaTeX)
   │
   ├── front/
-  │   └── src/            # código-fonte React
+  │   └── src/            # código-fonte
   │
   ├── .gitignore
   ├── LICENSE
@@ -105,7 +104,6 @@ Arquitetura **three-tier** com separação clara entre apresentação, lógica d
   ├─────────────────────────────────────────┤
   │  Estrutura do repositório     [ ✓ ]     │
   │  Documentação técnica         [ ✓ ]     │
-  │  Front-end (React)            [ ✓ ]     │
   │  Back-end / API REST          [ ✓ ]     │
   │  Integração API + Database    [ ✓ ]     │
   └─────────────────────────────────────────┘
@@ -120,9 +118,9 @@ Arquitetura **three-tier** com separação clara entre apresentação, lógica d
   │  DEVELOPER                    HANDLE                       │
   ├────────────────────────────────────────────────────────────┤
   │  Lucas Rodrigues Daniel    →  github.com/Iuto32            │
-  │  Murilo Abila Fernandes    →  github.com/MuiloAFernandes    │
-  │  Nícolas Silva Maciel      →  github.com/Nicolas-S-Maciel   │
-  │  Samuel Siqueira Lima      →  —                            │
+  │  Murilo Abila Fernandes    →  github.com/MuiloAFernandes   │
+  │  Nícolas Silva Maciel      →  github.com/Nicolas-S-Maciel  │
+  │  Samuel Siqueira Lima      →  github.com/samuellima-17     │
   └────────────────────────────────────────────────────────────┘
 ```
 
