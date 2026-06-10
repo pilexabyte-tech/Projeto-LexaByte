@@ -5,6 +5,7 @@ Execute após: python manage.py migrate
 """
 import os
 import django
+from urllib.parse import quote_plus
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'lexabyte.settings')
 django.setup()
@@ -54,48 +55,118 @@ for user_data in usuarios_data:
 
 # Criar conteúdos
 print("\n[3/3] Criando conteúdos...")
+
+
+def archive_search_link(titulo, mediatype):
+    query = quote_plus(f'"{titulo}" AND mediatype:{mediatype}')
+    return f'https://archive.org/search?query={query}'
+
+
 conteudos_data = [
     {
         'tipo': 'livro',
         'titulo': 'Dom Casmurro',
         'descricao': 'Romance clássico de Machado de Assis sobre Bentinho e Capitu',
-        'capa_url': 'https://exemplo.com/dom-casmurro.jpg',
-        'ano': 1899
+        'capa_url': None,
+        'ano': 1899,
+    },
+    {
+        'tipo': 'filme',
+        'titulo': 'O Pagador de Promessas',
+        'descricao': 'Clássico de Anselmo Duarte sobre fé, promessa e injustiça social',
+        'capa_url': None,
+        'ano': 1962,
+    },
+    {
+        'tipo': 'serie',
+        'titulo': 'O Bem-Amado',
+        'descricao': 'Série clássica inspirada na obra de Dias Gomes e no cotidiano político brasileiro',
+        'capa_url': None,
+        'ano': 1973,
     },
     {
         'tipo': 'livro',
         'titulo': 'Grande Sertão: Veredas',
-        'descricao': 'Obra-prima de Guimarães Rosa sobre o sertão mineiro',
-        'capa_url': 'https://exemplo.com/grande-sertao.jpg',
-        'ano': 1956
+        'descricao': 'Obra-prima de Guimarães Rosa sobre o sertão mineiro e seus dilemas',
+        'capa_url': None,
+        'ano': 1956,
+    },
+    {
+        'tipo': 'filme',
+        'titulo': 'Vidas Secas',
+        'descricao': 'Adaptação do romance de Graciliano Ramos sobre a seca e a sobrevivência no sertão',
+        'capa_url': None,
+        'ano': 1963,
+    },
+    {
+        'tipo': 'serie',
+        'titulo': 'Sítio do Picapau Amarelo',
+        'descricao': 'Adaptação televisiva do universo infantil de Monteiro Lobato',
+        'capa_url': None,
+        'ano': 1977,
     },
     {
         'tipo': 'livro',
         'titulo': 'Capitães da Areia',
         'descricao': 'Romance de Jorge Amado sobre crianças abandonadas de Salvador',
-        'capa_url': 'https://exemplo.com/capitaes-da-areia.jpg',
-        'ano': 1937
+        'capa_url': None,
+        'ano': 1937,
     },
     {
         'tipo': 'filme',
-        'titulo': 'Cidade de Deus',
-        'descricao': 'Filme de Fernando Meirelles sobre a vida no Rio de Janeiro',
-        'capa_url': 'https://exemplo.com/cidade-de-deus.jpg',
-        'ano': 2002
-    },
-    {
-        'tipo': 'filme',
-        'titulo': 'Memórias Póstumas de Brás Cubas',
-        'descricao': 'Adaptação da obra de Machado de Assis para o cinema',
-        'capa_url': 'https://exemplo.com/brás-cubas.jpg',
-        'ano': 1985
+        'titulo': 'Macunaíma',
+        'descricao': 'Longa de Joaquim Pedro de Andrade inspirado na obra de Mário de Andrade',
+        'capa_url': None,
+        'ano': 1969,
     },
     {
         'tipo': 'serie',
-        'titulo': 'Conversa com Bial',
-        'descricao': 'Série de entrevistas com personalidades brasileiras',
-        'capa_url': 'https://exemplo.com/conversa-bial.jpg',
-        'ano': 2000
+        'titulo': 'Carga Pesada',
+        'descricao': 'Série clássica sobre estrada, trabalho e amizade entre caminhoneiros',
+        'capa_url': None,
+        'ano': 1979,
+    },
+    {
+        'tipo': 'livro',
+        'titulo': 'Memórias Póstumas de Brás Cubas',
+        'descricao': 'Narrativa inovadora de Machado de Assis, marco do realismo brasileiro',
+        'capa_url': None,
+        'ano': 1881,
+    },
+    {
+        'tipo': 'filme',
+        'titulo': 'Terra em Transe',
+        'descricao': 'Filme de Glauber Rocha sobre crise política e tensão no Brasil',
+        'capa_url': None,
+        'ano': 1967,
+    },
+    {
+        'tipo': 'serie',
+        'titulo': 'Malu Mulher',
+        'descricao': 'Série pioneira sobre independência feminina e conflitos urbanos',
+        'capa_url': None,
+        'ano': 1979,
+    },
+    {
+        'tipo': 'livro',
+        'titulo': 'O Cortiço',
+        'descricao': 'Clássico naturalista de Aluísio Azevedo sobre desigualdade e vida coletiva',
+        'capa_url': None,
+        'ano': 1890,
+    },
+    {
+        'tipo': 'filme',
+        'titulo': 'Limite',
+        'descricao': 'Obra silenciosa de Mário Peixoto, referência do cinema brasileiro',
+        'capa_url': None,
+        'ano': 1931,
+    },
+    {
+        'tipo': 'serie',
+        'titulo': 'Armação Ilimitada',
+        'descricao': 'Série marcante dos anos 80 que misturou humor, juventude e cultura pop',
+        'capa_url': None,
+        'ano': 1985,
     },
 ]
 
@@ -108,11 +179,11 @@ for cont_data in conteudos_data:
 # Criar recomendações e adicionar à lista do usuário
 print("\n[4/4] Criando recomendações e relacionamentos...")
 recomendacoes_mapping = [
-    ('joao_silva', 'Dom Casmurro', 'https://exemplo.com/dom-casmurro-completo'),
-    ('joao_silva', 'Capitães da Areia', 'https://exemplo.com/capitaes-completo'),
-    ('maria_santos', 'Grande Sertão: Veredas', 'https://exemplo.com/grande-sertao-completo'),
-    ('maria_santos', 'Cidade de Deus', 'https://exemplo.com/cidade-completo'),
-    ('pedro_oliveira', 'Memórias Póstumas de Brás Cubas', None),
+    ('joao_silva', 'Dom Casmurro', archive_search_link('Dom Casmurro', 'texts')),
+    ('joao_silva', 'O Pagador de Promessas', archive_search_link('O Pagador de Promessas', 'movies')),
+    ('maria_santos', 'Grande Sertão: Veredas', archive_search_link('Grande Sertão: Veredas', 'texts')),
+    ('maria_santos', 'O Bem-Amado', archive_search_link('O Bem-Amado', 'movies')),
+    ('pedro_oliveira', 'Macunaíma', archive_search_link('Macunaíma', 'movies')),
 ]
 
 for usuario_login, conteudo_titulo, link in recomendacoes_mapping:

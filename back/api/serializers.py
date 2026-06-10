@@ -24,8 +24,8 @@ class MaterialSerializer(serializers.ModelSerializer):
 class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuario
-        fields = ['id_usuario', 'nome', 'login', 'email', 'criado_em']
-        read_only_fields = ['id_usuario', 'criado_em']
+        fields = ['id_usuario', 'nome', 'login', 'email', 'is_admin', 'criado_em']
+        read_only_fields = ['id_usuario', 'is_admin', 'criado_em']
 
     def create(self, validated_data):
         # Em produção, fazer hashing da senha com bcrypt
@@ -115,5 +115,15 @@ class UsuarioConteudoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UsuarioConteudo
-        fields = ['conteudo', 'conteudo_detalhes', 'usuario', 'usuario_nome', 'salvo_em']
-        read_only_fields = ['salvo_em']
+        fields = ['id', 'conteudo', 'conteudo_detalhes', 'usuario', 'usuario_nome', 'salvo_em']
+        read_only_fields = ['id', 'usuario', 'usuario_nome', 'salvo_em']
+
+    def validate(self, data):
+        request = self.context.get('request')
+        usuario = getattr(request, 'user', None)
+        conteudo = data.get('conteudo')
+
+        if usuario and conteudo and UsuarioConteudo.objects.filter(usuario=usuario, conteudo=conteudo).exists():
+            raise serializers.ValidationError('Conteudo ja esta nos favoritos.')
+
+        return data

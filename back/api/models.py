@@ -13,6 +13,7 @@ class Usuario(models.Model):
         help_text='Senha armazenada com hash.',
     )
     email = models.EmailField(max_length=150, blank=True, null=True, unique=True, db_column='Email')
+    is_admin = models.BooleanField(default=False, db_column='Is_Admin')
     criado_em = models.DateTimeField(auto_now_add=True, db_column='Criado_em')
 
     class Meta:
@@ -20,6 +21,22 @@ class Usuario(models.Model):
 
     def __str__(self):
         return f"{self.nome} ({self.login})"
+
+    @property
+    def is_authenticated(self):
+        return True
+
+    @property
+    def is_anonymous(self):
+        return False
+
+    @property
+    def is_staff(self):
+        return self.is_admin
+
+    @property
+    def is_superuser(self):
+        return self.is_admin
 
 
 # ============================================================

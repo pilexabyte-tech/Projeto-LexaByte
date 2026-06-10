@@ -102,6 +102,92 @@ async function getMateriais() {
     }
 }
 
+async function getConteudos() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/conteudos/`, {
+            method: 'GET',
+            headers: getHeaders(false),
+        });
+        const data = await response.json();
+        return { success: response.ok, conteudos: data, error: response.ok ? null : data };
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+}
+
+async function createConteudo({ titulo, descricao, tipo, capa_url = '', ano = '' }) {
+    try {
+        const body = {
+            titulo,
+            descricao,
+            tipo,
+            capa_url,
+            ano: ano ? Number(ano) : null,
+        };
+
+        const response = await fetch(`${API_BASE_URL}/conteudos/`, {
+            method: 'POST',
+            headers: getHeaders(true),
+            body: JSON.stringify(body),
+        });
+        const data = await response.json();
+        return { success: response.ok, conteudo: response.ok ? data : null, error: response.ok ? null : data };
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+}
+
+async function deleteConteudo(id) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/conteudos/${id}/`, {
+            method: 'DELETE',
+            headers: getHeaders(true),
+        });
+        return { success: response.ok || response.status === 204 };
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+}
+
+async function getFavoritos() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/usuario-conteudo/`, {
+            method: 'GET',
+            headers: getHeaders(true),
+        });
+        const data = await response.json();
+        return { success: response.ok, favoritos: response.ok ? data : [], error: response.ok ? null : data };
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+}
+
+async function addFavorito(conteudoId) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/usuario-conteudo/`, {
+            method: 'POST',
+            headers: getHeaders(true),
+            body: JSON.stringify({ conteudo: conteudoId }),
+        });
+        const data = await response.json();
+        return { success: response.ok, favorito: response.ok ? data : null, error: response.ok ? null : data };
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+}
+
+async function removeFavorito(favoritoId) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/usuario-conteudo/${favoritoId}/`, {
+            method: 'DELETE',
+            headers: getHeaders(true),
+        });
+        return { success: response.ok || response.status === 204 };
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+}
+
 async function getUserMateriais() {
     try {
         const response = await fetch(`${API_BASE_URL}/materiais/`, {

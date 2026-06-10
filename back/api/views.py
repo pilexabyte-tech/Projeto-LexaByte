@@ -4,6 +4,7 @@ from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, BasePermission, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from .authentication import UsuarioTokenAuthentication
 from .models import Material, Usuario, Conteudo, Recomendacao, UsuarioConteudo
 from .serializers import (
     MaterialSerializer,
@@ -31,6 +32,7 @@ class LoginView(APIView):
                 'username': usuario.login,
                 'email': usuario.email,
                 'nome': usuario.nome,
+                'is_admin': usuario.is_admin,
             }, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
 
@@ -48,6 +50,7 @@ class RegisterView(APIView):
                 'username': usuario.login,
                 'email': usuario.email,
                 'nome': usuario.nome,
+                'is_admin': usuario.is_admin,
             }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -71,9 +74,15 @@ class IsAutorOrAdmin(BasePermission):
         return bool(groups and groups.filter(name__in=['autor', 'admin']).exists())
 
 
+class IsUsuarioAdmin(BasePermission):
+    def has_permission(self, request, view):
+        return bool(getattr(request.user, 'is_admin', False))
+
+
 class MaterialListCreateView(generics.ListCreateAPIView):
     queryset = Material.objects.all()
     serializer_class = MaterialSerializer
+    authentication_classes = [UsuarioTokenAuthentication]
 
     def get_permissions(self):
         if self.request.method == 'POST':
@@ -84,6 +93,12 @@ class MaterialListCreateView(generics.ListCreateAPIView):
 class MaterialDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Material.objects.all()
     serializer_class = MaterialSerializer
+    authentication_classes = [UsuarioTokenAuthentication]
+
+    def get_permissions(self):
+        if self.request.method in ('PUT', 'PATCH', 'DELETE'):
+            return [IsAuthenticated(), IsUsuarioAdmin()]
+        return [AllowAny()]
 
 
 # ============================================================
@@ -108,12 +123,24 @@ class ConteudoListCreateView(generics.ListCreateAPIView):
     serializer_class = ConteudoSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['tipo']
+    authentication_classes = [UsuarioTokenAuthentication]
+
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [IsAuthenticated()]
+        return [AllowAny()]
 
 
 class ConteudoDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Conteudo.objects.all()
     serializer_class = ConteudoSerializer
     lookup_field = 'id_conteudo'
+    authentication_classes = [UsuarioTokenAuthentication]
+
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            return [AllowAny()]
+        return [IsAuthenticated(), IsUsuarioAdmin()]
 
 
 # ============================================================
@@ -134,10 +161,21 @@ class RecomendacaoDetailView(generics.RetrieveUpdateDestroyAPIView):
 # UsuarioConteudo
 # ============================================================
 class UsuarioConteudoListCreateView(generics.ListCreateAPIView):
-    queryset = UsuarioConteudo.objects.all()
     serializer_class = UsuarioConteudoSerializer
+    authentication_classes = [UsuarioTokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return UsuarioConteudo.objects.filter(usuario=self.request.user).select_related('conteudo', 'usuario')
+
+    def perform_create(self, serializer):
+        serializer.save(usuario=self.request.user)
 
 
 class UsuarioConteudoDetailView(generics.RetrieveDestroyAPIView):
-    queryset = UsuarioConteudo.objects.all()
     serializer_class = UsuarioConteudoSerializer
+    authentication_classes = [UsuarioTokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return UsuarioConteudo.objects.filter(usuario=self.request.user).select_related('conteudo', 'usuario')

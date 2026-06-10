@@ -1,57 +1,336 @@
 // ============================================================
-// LEXABYTE — app.js
-// Filtros, busca, scroll reveal e integração com componentes
+// LEXABYTE - app.js
+// Conteudos, favoritos, busca, filtros e autenticacao de tela.
 // ============================================================
 
-// Inicializa o Modal globalmente
 const modal = new Modal('app-modal');
 
-// Entradas da UI usadas em vários fluxos
 const altaCards = document.getElementById('alta-cards');
 const classicosCards = document.getElementById('classicos-cards');
+const favoritesCards = document.getElementById('favorites-cards');
 const navAuth = document.getElementById('nav-auth');
+const navFavorites = document.getElementById('nav-favorites');
+const navAddContent = document.getElementById('nav-add-content');
+const userAreaAdd = document.getElementById('user-area-add');
 const loginGate = document.getElementById('login-gate');
 const userInfo = document.getElementById('user-info');
 const userNameEl = document.getElementById('user-name');
 const userEmailEl = document.getElementById('user-email');
 const userMateriaisEl = document.getElementById('user-materiais');
+const searchInput = document.querySelector('.search-input');
+const searchBtn = document.querySelector('.search-btn');
+const filterBtns = document.querySelectorAll('.filter-btn');
 const modalTriggerButtons = document.querySelectorAll('[data-modal-open]');
-const infoButton = document.querySelector('.btn-info');
+const infoButton = document.querySelector('.featured .btn-info');
 
-function updateAuthUI() {
+const state = {
+  conteudos: [],
+  favoritos: new Map(),
+};
+
+function getAuthState() {
   const token = getAuthToken();
   const user = getStoredUser();
-  const isAuthenticated = Boolean(token && user);
+  return { token, user, isAuthenticated: Boolean(token && user) };
+}
 
-  if (navAuth) {
-    navAuth.textContent = isAuthenticated ? 'Sair' : 'Entrar';
-    navAuth.href = isAuthenticated ? '#' : 'login.html';
-  }
+function requireLogin() {
+  if (getAuthState().isAuthenticated) return true;
+  window.location.href = 'login.html';
+  return false;
+}
 
-  if (isAuthenticated) {
-    if (loginGate) loginGate.style.display = 'none';
-    if (userInfo) userInfo.style.display = 'flex';
-    if (userNameEl) userNameEl.textContent = user.username || user.nome || 'Usuário';
+function isAdminUser() {
+  const { user } = getAuthState();
+  return Boolean(user && user.is_admin);
+}
+
+function updateAuthUI() {
+  const { user, isAuthenticated } = getAuthState();
+
+  if (navAuth) navAuth.style.display = isAuthenticated ? '' : 'none';
+  if (loginGate) loginGate.style.display = isAuthenticated ? 'none' : '';
+  if (userInfo) userInfo.style.display = isAuthenticated ? 'flex' : 'none';
+  if (favoritesCards) favoritesCards.style.display = isAuthenticated ? '' : 'none';
+
+  if (isAuthenticated && user) {
+    if (userNameEl) userNameEl.textContent = user.nome || user.username || 'Usuario';
     if (userEmailEl) userEmailEl.textContent = user.email || 'email@exemplo.com';
-    if (userMateriaisEl) userMateriaisEl.textContent = '0';
-
-    if (navAuth) {
-      navAuth.addEventListener('click', async (event) => {
-        event.preventDefault();
-        await logout();
-        window.location.reload();
-      });
-    }
-  } else {
-    if (loginGate) loginGate.style.display = '';
-    if (userInfo) userInfo.style.display = 'none';
   }
+}
+
+function formatType(tipo) {
+  return tipo ? String(tipo).toLowerCase() : 'outro';
+}
+
+function asModalContent(conteudo) {
+  return {
+    ...conteudo,
+    tipo: formatType(conteudo.tipo),
+    autor_ou_criador: conteudo.ano ? String(conteudo.ano) : 'Ano nao informado',
+    data_adicao: conteudo.criado_em,
+  };
+}
+
+function favoriteFor(conteudoId) {
+  return state.favoritos.get(Number(conteudoId));
+}
+
+function escapeAttr(text) {
+  const div = document.createElement('div');
+  div.textContent = text || '';
+  return div.innerHTML;
+}
+
+function createConteudoCard(conteudo) {
+  const card = document.createElement('div');
+  const id = Number(conteudo.id_conteudo);
+  const title = conteudo.titulo || 'Sem titulo';
+  const type = formatType(conteudo.tipo);
+  const favorite = favoriteFor(id);
+  const cover = conteudo.capa_url
+    ? `<img src="${escapeAttr(conteudo.capa_url)}" alt="${escapeAttr(title)}">`
+    : `<div class="card-thumb-placeholder">${escapeAttr(title.split(' ').slice(0, 2).join(' ').toUpperCase())}</div>`;
+
+  card.className = 'card';
+  card.dataset.tipo = type;
+  card.dataset.id = String(id);
+  card.innerHTML = `
+    <div class="card-thumb">
+      ${cover}
+      <span class="card-type-badge">${type}</span>
+      <button type="button" class="card-favorite ${favorite ? 'active' : ''}" aria-label="${favorite ? 'Remover dos favoritos' : 'Salvar nos favoritos'}">${favorite ? '★' : '☆'}</button>
+      <div class="card-overlay">
+        <button type="button" class="card-play">Ver</button>
+      </div>
+    </div>
+    <div class="card-info">
+      <div class="card-title">${escapeAttr(title)}</div>
+      <div class="card-meta">${conteudo.ano || 'Ano nao informado'}</div>
+      ${isAdminUser() ? '<button type="button" class="card-admin-delete">Remover</button>' : ''}
+    </div>
+  `;
+
+  const openDetails = () => modal.open(asModalContent(conteudo));
+  card.querySelector('.card-thumb').addEventListener('click', (event) => {
+    if (!event.target.closest('button')) openDetails();
+  });
+  card.querySelector('.card-play').addEventListener('click', (event) => {
+    event.stopPropagation();
+    openDetails();
+  });
+  card.querySelector('.card-favorite').addEventListener('click', async (event) => {
+    event.stopPropagation();
+    if (!requireLogin()) return;
+    await toggleFavorito(id);
+  });
+
+  const deleteButton = card.querySelector('.card-admin-delete');
+  if (deleteButton) {
+    deleteButton.addEventListener('click', async (event) => {
+      event.stopPropagation();
+      await handleDeleteConteudo(id);
+    });
+  }
+
+  return card;
+}
+
+function renderConteudos() {
+  if (altaCards) {
+    altaCards.innerHTML = '';
+    state.conteudos.slice(0, 8).forEach(conteudo => altaCards.appendChild(createConteudoCard(conteudo)));
+  }
+
+  if (classicosCards) {
+    classicosCards.innerHTML = '';
+    state.conteudos
+      .filter(conteudo => formatType(conteudo.tipo) === 'livro')
+      .slice(0, 8)
+      .forEach(conteudo => classicosCards.appendChild(createConteudoCard(conteudo)));
+  }
+
+  applyActiveFilter();
+}
+
+function renderFavoritos() {
+  if (!favoritesCards) return;
+  const { isAuthenticated } = getAuthState();
+  const favoritos = Array.from(state.favoritos.values()).map(item => item.conteudo_detalhes).filter(Boolean);
+
+  favoritesCards.style.display = isAuthenticated ? '' : 'none';
+  favoritesCards.innerHTML = '';
+  if (userMateriaisEl) userMateriaisEl.textContent = String(favoritos.length);
+
+  if (!isAuthenticated) return;
+  if (!favoritos.length) {
+    favoritesCards.innerHTML = '<div class="empty-state">Nenhum favorito salvo ainda.</div>';
+    return;
+  }
+
+  favoritos.forEach(conteudo => favoritesCards.appendChild(createConteudoCard(conteudo)));
+}
+
+async function loadConteudos() {
+  const result = await getConteudos();
+  if (!result.success || !Array.isArray(result.conteudos)) {
+    console.warn('Erro ao buscar conteudos:', result.error);
+    return;
+  }
+  state.conteudos = result.conteudos;
+  renderConteudos();
+}
+
+async function loadFavoritos() {
+  state.favoritos.clear();
+  if (!getAuthState().isAuthenticated) {
+    renderFavoritos();
+    return;
+  }
+
+  const result = await getFavoritos();
+  if (!result.success) {
+    console.warn('Erro ao buscar favoritos:', result.error);
+    renderFavoritos();
+    return;
+  }
+
+  result.favoritos.forEach(favorito => {
+    state.favoritos.set(Number(favorito.conteudo), favorito);
+  });
+  renderFavoritos();
+}
+
+async function toggleFavorito(conteudoId) {
+  const favorite = favoriteFor(conteudoId);
+  const result = favorite ? await removeFavorito(favorite.id) : await addFavorito(conteudoId);
+  if (!result.success) {
+    console.warn('Erro ao atualizar favorito:', result.error);
+    return;
+  }
+
+  await loadFavoritos();
+  renderConteudos();
+}
+
+async function handleDeleteConteudo(conteudoId) {
+  if (!isAdminUser()) return;
+  if (!window.confirm('Remover este conteudo da biblioteca?')) return;
+
+  const result = await deleteConteudo(conteudoId);
+  if (!result.success) {
+    window.alert('Nao foi possivel remover o conteudo.');
+    return;
+  }
+
+  state.conteudos = state.conteudos.filter(conteudo => Number(conteudo.id_conteudo) !== Number(conteudoId));
+  state.favoritos.delete(Number(conteudoId));
+  renderConteudos();
+  renderFavoritos();
+}
+
+function initContentModal() {
+  const publishModal = document.createElement('div');
+  publishModal.id = 'publish-modal';
+  publishModal.className = 'publish-modal';
+  publishModal.setAttribute('aria-hidden', 'true');
+  publishModal.innerHTML = `
+    <div class="modal-backdrop" role="presentation"></div>
+    <div class="modal publish-modal-window" role="dialog" aria-modal="true" aria-labelledby="publish-modal-title">
+      <button type="button" class="modal-close" aria-label="Fechar modal"><span aria-hidden="true">x</span></button>
+      <div class="modal-content">
+        <div class="section-tag">biblioteca</div>
+        <h2 id="publish-modal-title" class="modal-title">Adicionar conteudo</h2>
+        <form id="publish-form" class="publish-form">
+          <div class="field-group">
+            <label class="field">
+              <span class="field-label">Titulo</span>
+              <input class="field-input" id="publish-title" type="text" placeholder="Nome do conteudo" required>
+            </label>
+            <label class="field">
+              <span class="field-label">Descricao</span>
+              <textarea class="field-input" id="publish-description" rows="4" placeholder="Descricao do conteudo"></textarea>
+            </label>
+            <label class="field">
+              <span class="field-label">Tipo</span>
+              <select class="field-input" id="publish-type" required>
+                <option value="">Selecione</option>
+                <option value="livro">Livro</option>
+                <option value="filme">Filme</option>
+                <option value="serie">Serie</option>
+              </select>
+            </label>
+            <label class="field">
+              <span class="field-label">Ano</span>
+              <input class="field-input" id="publish-year" type="number" min="0" max="3000" placeholder="2025">
+            </label>
+            <label class="field">
+              <span class="field-label">URL da capa</span>
+              <input class="field-input" id="publish-cover" type="url" placeholder="https://...">
+            </label>
+          </div>
+          <button type="submit" class="btn-watch">Salvar conteudo</button>
+          <p id="publish-status" class="form-status" aria-live="polite"></p>
+        </form>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(publishModal);
+
+  const form = publishModal.querySelector('#publish-form');
+  const status = publishModal.querySelector('#publish-status');
+  const close = () => {
+    publishModal.classList.remove('open');
+    publishModal.setAttribute('aria-hidden', 'true');
+  };
+  const open = () => {
+    if (!requireLogin()) return;
+    publishModal.classList.add('open');
+    publishModal.setAttribute('aria-hidden', 'false');
+  };
+
+  [navAddContent, userAreaAdd].forEach(button => {
+    if (button) button.addEventListener('click', open);
+  });
+  publishModal.querySelector('.modal-close').addEventListener('click', close);
+  publishModal.querySelector('.modal-backdrop').addEventListener('click', close);
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (!requireLogin()) return;
+
+    const payload = {
+      titulo: publishModal.querySelector('#publish-title').value.trim(),
+      descricao: publishModal.querySelector('#publish-description').value.trim(),
+      tipo: publishModal.querySelector('#publish-type').value,
+      ano: publishModal.querySelector('#publish-year').value.trim(),
+      capa_url: publishModal.querySelector('#publish-cover').value.trim(),
+    };
+
+    if (!payload.titulo || !payload.tipo) {
+      status.textContent = 'Preencha titulo e tipo.';
+      return;
+    }
+
+    status.textContent = 'Salvando conteudo...';
+    const result = await createConteudo(payload);
+    if (!result.success) {
+      status.textContent = 'Nao foi possivel salvar o conteudo.';
+      return;
+    }
+
+    state.conteudos.unshift(result.conteudo);
+    renderConteudos();
+    form.reset();
+    status.textContent = 'Conteudo adicionado.';
+    setTimeout(close, 600);
+  });
 }
 
 function openButtonModal(button) {
   if (!button) return;
   modal.open({
-    titulo: button.dataset.modalTitle || 'Conteúdo em destaque',
+    titulo: button.dataset.modalTitle || 'Conteudo em destaque',
     tipo: button.dataset.modalType || 'texto',
     autor_ou_criador: button.dataset.modalSubtitle || 'LexaByte',
     descricao: button.dataset.modalText || '',
@@ -65,282 +344,96 @@ function initFeatureButtons() {
 
   if (infoButton) {
     infoButton.addEventListener('click', () => {
-      const target = altaCards || document.getElementById('alta-cards');
-      if (target) {
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+      if (altaCards) altaCards.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   }
 }
 
-// ---- SCROLL REVEAL ----
-const reveals = document.querySelectorAll('.reveal');
-if (reveals.length) {
+function matchesFilter(cardType, filterName) {
+  if (filterName === 'all') return true;
+  return cardType === filterName;
+}
+
+function applyActiveFilter() {
+  const active = document.querySelector('.filter-btn.active');
+  const filter = active ? active.dataset.filter : 'all';
+  document.querySelectorAll('.cards-grid .card, .cards-row .card').forEach(card => {
+    const type = card.dataset.tipo ? card.dataset.tipo.toLowerCase() : '';
+    card.style.display = matchesFilter(type, filter) ? '' : 'none';
+  });
+}
+
+function runSearch() {
+  const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+  document.querySelectorAll('.card').forEach(card => {
+    if (!query) {
+      card.style.display = '';
+      return;
+    }
+    const title = card.querySelector('.card-title');
+    const meta = card.querySelector('.card-meta');
+    const text = `${title ? title.textContent : ''} ${meta ? meta.textContent : ''}`.toLowerCase();
+    card.style.display = text.includes(query) ? '' : 'none';
+  });
+}
+
+function initSearchAndFilters() {
+  filterBtns.forEach(button => {
+    button.addEventListener('click', () => {
+      filterBtns.forEach(item => item.classList.remove('active'));
+      button.classList.add('active');
+      applyActiveFilter();
+    });
+  });
+
+  if (searchBtn) searchBtn.addEventListener('click', runSearch);
+  if (searchInput) {
+    searchInput.addEventListener('keydown', event => {
+      if (event.key === 'Enter') runSearch();
+    });
+    searchInput.addEventListener('input', () => {
+      if (searchInput.value.trim() === '') applyActiveFilter();
+    });
+  }
+}
+
+function initNavActions() {
+  if (navAuth) {
+    navAuth.addEventListener('click', async () => {
+      await logout();
+      window.location.reload();
+    });
+  }
+
+  if (navFavorites) {
+    navFavorites.addEventListener('click', () => {
+      document.getElementById('user-area').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+}
+
+function initReveal() {
+  const reveals = document.querySelectorAll('.reveal');
+  if (!reveals.length) return;
+
   const observer = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        observer.unobserve(e.target); // dispara uma vez
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
       }
     });
   }, { threshold: 0.08 });
   reveals.forEach(el => observer.observe(el));
 }
 
-// ---- FILTROS ----
-const filterBtns = document.querySelectorAll('.filter-btn');
-filterBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    filterBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-
-    const filter = btn.dataset.filter;
-    const cards = document.querySelectorAll('.cards-grid .card, .cards-row .card');
-
-    // Mapeamento entre tipos retornados pela API e filtros da UI
-    // API types normalized via formatType(): e.g. 'livro', 'video', 'artigo', 'curso', 'serie', 'outro'
-    function matchesFilter(cardType, filterName) {
-      if (filterName === 'all') return true;
-      if (!cardType) return false;
-      if (filterName === 'livro') return cardType === 'livro';
-      if (filterName === 'filme') return cardType === 'video';
-      if (filterName === 'serie') return cardType === 'serie';
-      // filtros desconhecidos: não mostrar
-      return false;
-    }
-
-    cards.forEach(card => {
-      const type = (card.dataset && card.dataset.tipo) ? card.dataset.tipo.toLowerCase() : '';
-      if (matchesFilter(type, filter)) {
-        card.style.display = '';
-      } else {
-        card.style.display = 'none';
-      }
-    });
-  });
-});
-
-// ---- BUSCA ----
-const searchInput = document.querySelector('.search-input');
-const searchBtn   = document.querySelector('.search-btn');
-
-function runSearch() {
-  const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
-  if (!query) return;
-
-  const cards = document.querySelectorAll('.card');
-  cards.forEach(card => {
-    const title = card.querySelector('.card-title');
-    const meta  = card.querySelector('.card-meta');
-    const text  = ((title ? title.textContent : '') + ' ' + (meta ? meta.textContent : '')).toLowerCase();
-    card.style.display = text.includes(query) ? '' : 'none';
-  });
-}
-
-if (searchBtn) searchBtn.addEventListener('click', runSearch);
-if (searchInput) {
-  // Enter executa busca
-  searchInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter') runSearch();
-  });
-
-  // Resetar filtro quando o campo fica vazio por qualquer ação (input covers paste, delete, clear, mouse)
-  searchInput.addEventListener('input', () => {
-    if (searchInput.value.trim() === '') {
-      document.querySelectorAll('.card').forEach(c => c.style.display = '');
-    }
-  });
-}
-
-// Backend integration: fetch materiais from Django API
-const API_URL = `${window.LEXABYTE_API_BASE_URL || 'http://127.0.0.1:8000/api'}/materiais/`;
-
-function formatType(tipo) {
-  return tipo ? tipo.toLowerCase() : 'outro';
-}
-
-function createMaterialCard(material) {
-  const card = document.createElement('div');
-  card.className = 'card';
-  // adiciona atributo data-tipo padronizado em lowercase para filtros
-  card.dataset.tipo = formatType(material.tipo);
-  const title = material.titulo || 'Sem título';
-  const badge = formatType(material.tipo);
-  const meta = material.genero ? `${material.autor_ou_criador} · ${material.genero}` : material.autor_ou_criador || 'Sem autor';
-  const actionLabel = material.link_acesso ? 'Acessar' : 'Ver';
-
-  card.innerHTML = `
-    <div class="card-thumb">
-      <div class="card-thumb-placeholder">${title.split(' ').slice(0, 2).join(' ').toUpperCase()}</div>
-      <span class="card-type-badge">${badge}</span>
-      <div class="card-overlay">
-        <button class="card-play">${actionLabel}</button>
-      </div>
-    </div>
-    <div class="card-info">
-      <div class="card-title">${title}</div>
-      <div class="card-meta">${meta}</div>
-    </div>
-  `;
-  
-  const cardThumb = card.querySelector('.card-thumb');
-  if (cardThumb) {
-    cardThumb.style.cursor = 'pointer';
-    cardThumb.addEventListener('click', (e) => {
-      e.preventDefault();
-      modal.open(material);
-    });
-  }
-
-  return card;
-}
-
-function initPublishModal() {
-  if (!canPublishContent()) return;
-
-  const contentArea = document.querySelector('.content-area');
-  if (!contentArea) return;
-
-  const publishSection = document.createElement('section');
-  publishSection.className = 'content-section reveal visible publish-entry';
-  publishSection.innerHTML = `
-    <div class="section-header">
-      <div>
-        <div class="section-tag">publicar</div>
-        <h2 class="section-heading">Cadastrar novo <em>conteúdo</em></h2>
-      </div>
-      <button type="button" class="btn-watch" id="publish-open">Publicar conteúdo</button>
-    </div>
-  `;
-  contentArea.appendChild(publishSection);
-
-  const publishModal = document.createElement('div');
-  publishModal.id = 'publish-modal';
-  publishModal.className = 'publish-modal';
-  publishModal.setAttribute('aria-hidden', 'true');
-  publishModal.innerHTML = `
-    <div class="modal-backdrop" role="presentation"></div>
-    <div class="modal publish-modal-window" role="dialog" aria-modal="true" aria-labelledby="publish-modal-title">
-      <button type="button" class="modal-close" aria-label="Fechar modal"><span aria-hidden="true">×</span></button>
-      <div class="modal-content">
-        <div class="section-tag">publicar</div>
-        <h2 id="publish-modal-title" class="modal-title">Novo conteúdo</h2>
-        <form id="publish-form" class="publish-form">
-          <div class="field-group">
-            <label class="field">
-              <span class="field-label">Nome</span>
-              <input class="field-input" id="publish-title" type="text" placeholder="Nome do conteúdo" required>
-            </label>
-            <label class="field">
-              <span class="field-label">Descrição</span>
-              <textarea class="field-input" id="publish-description" rows="4" placeholder="Descrição do conteúdo" required></textarea>
-            </label>
-            <label class="field">
-              <span class="field-label">Criador</span>
-              <input class="field-input" id="publish-creator" type="text" placeholder="Autor ou criador" required>
-            </label>
-            <label class="field">
-              <span class="field-label">Ano de lançamento</span>
-              <input class="field-input" id="publish-year" type="number" min="0" placeholder="2025">
-            </label>
-            <label class="field">
-              <span class="field-label">Tipo de conteúdo</span>
-              <select class="field-input" id="publish-type" required>
-                <option value="">Selecione</option>
-                <option value="LIVRO">Livro</option>
-                <option value="VIDEO">Vídeo</option>
-                <option value="ARTIGO">Artigo</option>
-                <option value="CURSO">Curso</option>
-                <option value="OUTRO">Outro</option>
-              </select>
-            </label>
-            <label class="field">
-              <span class="field-label">Gênero</span>
-              <input class="field-input" id="publish-genre" type="text" placeholder="Gênero do conteúdo">
-            </label>
-          </div>
-          <button type="submit" class="btn-watch">Publicar conteúdo</button>
-          <p id="publish-status" class="form-status" aria-live="polite"></p>
-        </form>
-      </div>
-    </div>
-  `;
-  document.body.appendChild(publishModal);
-
-  const publishForm = document.querySelector('#publish-form');
-  const publishStatus = document.querySelector('#publish-status');
-  const closePublishModal = () => {
-    publishModal.classList.remove('open');
-    publishModal.setAttribute('aria-hidden', 'true');
-  };
-
-  document.querySelector('#publish-open').addEventListener('click', () => {
-    publishModal.classList.add('open');
-    publishModal.setAttribute('aria-hidden', 'false');
-  });
-  publishModal.querySelector('.modal-close').addEventListener('click', closePublishModal);
-  publishModal.querySelector('.modal-backdrop').addEventListener('click', closePublishModal);
-
-  publishForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    const titulo = document.querySelector('#publish-title').value.trim();
-    const descricao = document.querySelector('#publish-description').value.trim();
-    const criador = document.querySelector('#publish-creator').value.trim();
-    const tipo = document.querySelector('#publish-type').value;
-    const ano = document.querySelector('#publish-year').value.trim();
-    const genero = document.querySelector('#publish-genre').value.trim();
-
-    if (!titulo || !descricao || !criador || !tipo) {
-      if (publishStatus) publishStatus.textContent = 'Preencha nome, descrição, criador e tipo.';
-      return;
-    }
-
-    if (publishStatus) publishStatus.textContent = 'Enviando conteúdo...';
-
-    const result = await createMaterial(titulo, descricao, tipo, criador, '', ano, genero);
-
-    if (result.success) {
-      if (publishStatus) publishStatus.textContent = 'Conteúdo publicado com sucesso!';
-      const publishCardsGrid = document.querySelector('.cards-grid.wide');
-      if (publishCardsGrid) publishCardsGrid.appendChild(createMaterialCard(result.material));
-      publishForm.reset();
-      setTimeout(closePublishModal, 700);
-    } else {
-      if (publishStatus) publishStatus.textContent = `Erro ao publicar: ${result.error || 'não foi possível salvar.'}`;
-    }
-  });
-}
-
-async function loadMaterials() {
-  const cardsGrid = document.querySelector('.cards-grid.wide');
-  const classicosGrid = document.querySelector('#classicos-cards');
-  if (!cardsGrid) return;
-
-  // Limpa ambos os contêineres se existirem
-  if (classicosGrid) classicosGrid.innerHTML = '';
-
-  try {
-    const res = await fetch(API_URL);
-    if (!res.ok) return;
-    const data = await res.json();
-    if (!Array.isArray(data) || !data.length) return;
-
-    cardsGrid.innerHTML = '';
-    // Primeiros 5 vão para o destaque
-    data.slice(0, 5).forEach(material => cardsGrid.appendChild(createMaterialCard(material)));
-
-    // Próximos 3 (índices 5..7) vão para a seção clássicos
-    if (classicosGrid) {
-      data.slice(5, 8).forEach(material => classicosGrid.appendChild(createMaterialCard(material)));
-    }
-  } catch (error) {
-    console.warn('Erro ao buscar materiais:', error);
-  }
-}
-
-if (typeof getAuthToken === 'function' && typeof getStoredUser === 'function') {
-  updateAuthUI();
-}
+updateAuthUI();
+initReveal();
 initFeatureButtons();
-loadMaterials();
+initSearchAndFilters();
+initNavActions();
+initContentModal();
+Promise.all([loadConteudos(), loadFavoritos()]).then(() => {
+  renderConteudos();
+  renderFavoritos();
+});

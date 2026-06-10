@@ -18,7 +18,11 @@
     <li><a href="#">Séries</a></li>
     <li><a href="#">Livros</a></li>
   </ul>
-  <a href="login.html" id="nav-auth" class="nav-cta">Entrar</a>
+  <div class="nav-actions">
+    <button type="button" id="nav-favorites" class="nav-cta nav-action-btn">Favoritos</button>
+    <button type="button" id="nav-add-content" class="nav-cta nav-action-btn">Adicionar Conteúdo</button>
+    <button type="button" id="nav-auth" class="nav-cta nav-action-btn" style="display: none;">Sair</button>
+  </div>
 </nav>
 
 <div class="app-layout">
@@ -109,15 +113,15 @@
     <section class="content-section reveal" id="user-area">
       <div class="section-header">
         <div>
-          <div class="section-tag">área restrita</div>
-          <h2 class="section-heading">Minha <em>lista</em></h2>
+          <div class="section-tag">favoritos</div>
+          <h2 class="section-heading">Conteúdos <em>salvos</em></h2>
         </div>
+        <button type="button" class="btn-info" id="user-area-add">Adicionar Conteúdo</button>
       </div>
       <div class="login-gate" id="login-gate">
         <div class="login-gate-icon">⌗</div>
         <div class="login-gate-title">Acesso restrito</div>
-        <p class="login-gate-sub">Faça login para salvar conteúdo, acompanhar seu progresso e acessar funcionalidades exclusivas da plataforma.</p>
-        <a href="login.html" class="btn-watch" style="margin-top: 0.5rem;">Fazer login</a>
+        <p class="login-gate-sub">Use Favoritos ou Adicionar Conteúdo para continuar com sua conta.</p>
       </div>
       <div class="user-info" id="user-info" style="display: none;">
         <div class="user-avatar">👤</div>
@@ -128,10 +132,11 @@
         <div class="user-stats">
           <div class="stat">
             <span class="stat-number" id="user-materiais">0</span>
-            <span class="stat-label">Materiais</span>
+            <span class="stat-label">Favoritos</span>
           </div>
         </div>
       </div>
+      <div class="cards-grid wide favorites-grid" id="favorites-cards" style="display: none;"></div>
     </section>
 
   </main>

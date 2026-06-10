@@ -10,6 +10,19 @@
   min-height: 100vh;
 }
 
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.nav-action-btn {
+  cursor: pointer;
+  white-space: nowrap;
+}
+
 /* Override nav height token on narrow screens so content never hides */
 @media (max-width: 768px) {
   :root { --nav-h: 56px; }
@@ -388,6 +401,31 @@
   border: 1px solid var(--border-bright);
 }
 
+.card-favorite {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 2;
+  width: 2rem;
+  height: 2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-bright);
+  background: rgba(2,10,2,0.88);
+  color: var(--text-dim);
+  font-size: 1rem;
+  line-height: 1;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+
+.card-favorite:hover,
+.card-favorite.active {
+  color: var(--green);
+  border-color: var(--green-dim);
+  background: rgba(0,255,65,0.12);
+}
+
 .card-overlay {
   position: absolute; inset: 0;
   background: linear-gradient(to top, rgba(2,10,2,0.85) 0%, transparent 50%);
@@ -443,6 +481,35 @@
   color: var(--text-muted);
   letter-spacing: 0.1em;
   margin-top: 0.1rem;
+}
+
+.card-admin-delete {
+  width: fit-content;
+  margin-top: 0.45rem;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid rgba(255, 96, 96, 0.45);
+  background: rgba(255, 96, 96, 0.08);
+  color: #ff9a9a;
+  font-family: var(--mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.card-admin-delete:hover {
+  border-color: #ff9a9a;
+  background: rgba(255, 96, 96, 0.16);
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 1.2rem;
+  color: var(--text-muted);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
 }
 
 /* ============================================================
@@ -1020,6 +1087,16 @@ textarea.field-input {
 }
 
 @media (max-width: 600px) {
+  .nav-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .nav-action-btn {
+    font-size: 0.58rem;
+    padding-inline: 0.65rem;
+  }
+
   .featured { height: 340px; }
   .featured-title { font-size: 1.5rem; }
   .featured-desc { display: none; }
