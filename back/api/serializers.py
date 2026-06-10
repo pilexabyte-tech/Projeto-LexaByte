@@ -89,7 +89,8 @@ class RegisterSerializer(serializers.Serializer):
 class ConteudoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Conteudo
-        fields = ['id_conteudo', 'tipo', 'titulo', 'descricao', 'capa_url', 'ano', 'criado_em']
+        # NOVIDADE AQUI: 'link' adicionado na lista de campos
+        fields = ['id_conteudo', 'tipo', 'titulo', 'descricao', 'capa_url', 'link', 'ano', 'criado_em']
         read_only_fields = ['id_conteudo', 'criado_em']
 
 
@@ -102,7 +103,8 @@ class RecomendacaoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recomendacao
-        fields = ['id_recomendacao', 'conteudo', 'conteudo_titulo', 'usuario', 'usuario_nome', 'link', 'criado_em']
+        # O campo 'link' foi removido desta lista
+        fields = ['id_recomendacao', 'conteudo', 'conteudo_titulo', 'usuario', 'usuario_nome', 'criado_em']
         read_only_fields = ['id_recomendacao', 'criado_em']
 
 
