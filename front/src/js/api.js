@@ -241,3 +241,9 @@ async function deleteMaterial(id) {
         return { success: false, error: error.message };
     }
 }
+
+if (typeof window !== 'undefined') {
+    window.getAuthToken = getAuthToken;
+    window.getStoredUser = getStoredUser;
+    window.getHeaders = getHeaders;
+}
