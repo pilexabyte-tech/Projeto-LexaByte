@@ -12,6 +12,11 @@ const navAuth = document.getElementById('nav-auth');
 const navFavorites = document.getElementById('nav-favorites');
 const navAddContent = document.getElementById('nav-add-content');
 const userAreaAdd = document.getElementById('user-area-add');
+const pageLinks = document.querySelectorAll('[data-page-link]');
+const pageSections = document.querySelectorAll('[data-page-section]');
+const filmesCards = document.getElementById('filmes-cards');
+const seriesCards = document.getElementById('series-cards');
+const livrosCards = document.getElementById('livros-cards');
 const loginGate = document.getElementById('login-gate');
 const userInfo = document.getElementById('user-info');
 const userNameEl = document.getElementById('user-name');
@@ -22,6 +27,25 @@ const searchBtn = document.querySelector('.search-btn');
 const filterBtns = document.querySelectorAll('.filter-btn');
 const modalTriggerButtons = document.querySelectorAll('[data-modal-open]');
 const infoButton = document.querySelector('.featured .btn-info');
+const DEMO_SEED_FLAG = 'lexabyte-demo-seeded';
+
+const DEMO_CONTENTS = [
+  { tipo: 'livro', titulo: 'Dom Casmurro', descricao: 'Bentinho, Capitu e a dúvida que atravessa gerações da literatura brasileira.', capa_url: '', ano: 1899 },
+  { tipo: 'livro', titulo: 'Grande Sertão: Veredas', descricao: 'Riobaldo e o sertão de Guimarães Rosa em uma travessia de linguagem e destino.', capa_url: '', ano: 1956 },
+  { tipo: 'livro', titulo: 'Capitães da Areia', descricao: 'Uma leitura sobre infância, abandono e resistência nas ruas de Salvador.', capa_url: '', ano: 1937 },
+  { tipo: 'livro', titulo: 'Memórias Póstumas de Brás Cubas', descricao: 'O narrador defunto abre espaço para ironia, crítica social e invenção literária.', capa_url: '', ano: 1881 },
+  { tipo: 'livro', titulo: 'O Cortiço', descricao: 'Um retrato de desigualdade, convivência e tensões sociais no Rio de Janeiro.', capa_url: '', ano: 1890 },
+  { tipo: 'filme', titulo: 'O Pagador de Promessas', descricao: 'Fé, justiça e conflito social em um dos marcos do cinema brasileiro.', capa_url: '', ano: 1962 },
+  { tipo: 'filme', titulo: 'Vidas Secas', descricao: 'A seca, a fuga e a sobrevivência em uma adaptação essencial de Graciliano Ramos.', capa_url: '', ano: 1963 },
+  { tipo: 'filme', titulo: 'Macunaíma', descricao: 'Um anti-herói brasileiro em uma adaptação vibrante e inventiva.', capa_url: '', ano: 1969 },
+  { tipo: 'filme', titulo: 'Terra em Transe', descricao: 'Política, crise e tensão em um clássico do Cinema Novo.', capa_url: '', ano: 1967 },
+  { tipo: 'filme', titulo: 'Limite', descricao: 'Obra silenciosa e experimental que segue influenciando o cinema nacional.', capa_url: '', ano: 1931 },
+  { tipo: 'serie', titulo: 'O Bem-Amado', descricao: 'Satírica e política, a série virou referência de humor e crítica social.', capa_url: '', ano: 1973 },
+  { tipo: 'serie', titulo: 'Sítio do Picapau Amarelo', descricao: 'A fantasia de Monteiro Lobato em uma adaptação marcante da TV brasileira.', capa_url: '', ano: 1977 },
+  { tipo: 'serie', titulo: 'Carga Pesada', descricao: 'Estrada, amizade e trabalho em uma série querida pelo público.', capa_url: '', ano: 1979 },
+  { tipo: 'serie', titulo: 'Malu Mulher', descricao: 'Independência, conflitos urbanos e emancipação feminina em uma série pioneira.', capa_url: '', ano: 1979 },
+  { tipo: 'serie', titulo: 'Armação Ilimitada', descricao: 'Juventude, humor e cultura pop em um retrato emblemático dos anos 80.', capa_url: '', ano: 1985 },
+];
 
 const state = {
   conteudos: [],
@@ -61,6 +85,48 @@ function updateAuthUI() {
 
 function formatType(tipo) {
   return tipo ? String(tipo).toLowerCase() : 'outro';
+}
+
+function getPageNameFromHash() {
+  const value = window.location.hash.replace('#', '').trim();
+  if (['home', 'filmes', 'series', 'livros'].includes(value)) return value;
+  return 'home';
+}
+
+function getConteudosByType(tipo) {
+  return state.conteudos.filter(conteudo => formatType(conteudo.tipo) === tipo);
+}
+
+function renderCardList(container, conteudos, limit = 5) {
+  if (!container) return;
+  container.innerHTML = '';
+  conteudos.slice(0, limit).forEach(conteudo => container.appendChild(createConteudoCard(conteudo)));
+}
+
+function syncPageVisibility(pageName) {
+  pageSections.forEach(section => {
+    section.hidden = section.dataset.pageSection !== pageName;
+  });
+
+  pageLinks.forEach(link => {
+    if (link.closest('.nav-links')) {
+      link.classList.toggle('active', link.dataset.pageLink === pageName);
+    }
+  });
+}
+
+function navigateToPage(pageName, { updateHash = true } = {}) {
+  const targetPage = ['home', 'filmes', 'series', 'livros'].includes(pageName) ? pageName : 'home';
+  syncPageVisibility(targetPage);
+
+  if (updateHash && window.location.hash !== `#${targetPage}`) {
+    window.history.replaceState(null, '', `#${targetPage}`);
+  }
+
+  const targetSection = document.querySelector(`[data-page-section="${targetPage}"]`);
+  if (targetSection && typeof targetSection.scrollIntoView === 'function') {
+    targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 }
 
 function asModalContent(conteudo) {
@@ -138,17 +204,16 @@ function createConteudoCard(conteudo) {
 
 function renderConteudos() {
   if (altaCards) {
-    altaCards.innerHTML = '';
-    state.conteudos.slice(0, 8).forEach(conteudo => altaCards.appendChild(createConteudoCard(conteudo)));
+    renderCardList(altaCards, state.conteudos, 5);
   }
 
   if (classicosCards) {
-    classicosCards.innerHTML = '';
-    state.conteudos
-      .filter(conteudo => formatType(conteudo.tipo) === 'livro')
-      .slice(0, 8)
-      .forEach(conteudo => classicosCards.appendChild(createConteudoCard(conteudo)));
+    renderCardList(classicosCards, getConteudosByType('livro'), 5);
   }
+
+  renderCardList(filmesCards, getConteudosByType('filme'), 5);
+  renderCardList(seriesCards, getConteudosByType('serie'), 5);
+  renderCardList(livrosCards, getConteudosByType('livro'), 5);
 
   applyActiveFilter();
 }
@@ -179,6 +244,43 @@ async function loadConteudos() {
   }
   state.conteudos = result.conteudos;
   renderConteudos();
+}
+
+async function seedDemoConteudos({ force = false } = {}) {
+  if (!getAuthState().isAuthenticated) {
+    return { success: false, error: 'Faça login para criar os conteúdos de teste.' };
+  }
+
+  if (!force && sessionStorage.getItem(DEMO_SEED_FLAG) === '1') {
+    return { success: true, skipped: true, created: 0 };
+  }
+
+  const current = await getConteudos();
+  if (!current.success || !Array.isArray(current.conteudos)) {
+    return { success: false, error: current.error || 'Nao foi possivel carregar os conteudos existentes.' };
+  }
+
+  const existingTitles = new Set(current.conteudos.map(conteudo => conteudo.titulo));
+  let created = 0;
+
+  for (const conteudo of DEMO_CONTENTS) {
+    if (existingTitles.has(conteudo.titulo)) continue;
+
+    const result = await createConteudo(conteudo);
+    if (!result.success) {
+      return {
+        success: false,
+        error: `Falha ao criar "${conteudo.titulo}": ${result.error || 'erro desconhecido'}`,
+      };
+    }
+
+    created += 1;
+    existingTitles.add(conteudo.titulo);
+  }
+
+  sessionStorage.setItem(DEMO_SEED_FLAG, '1');
+  await loadConteudos();
+  return { success: true, created };
 }
 
 async function loadFavoritos() {
@@ -269,7 +371,10 @@ function initContentModal() {
               <input class="field-input" id="publish-cover" type="url" placeholder="https://...">
             </label>
           </div>
-          <button type="submit" class="btn-watch">Salvar conteudo</button>
+          <div class="modal-actions">
+            <button type="submit" class="btn-watch">Salvar conteudo</button>
+            <button type="button" class="btn-secondary" id="seed-demo-btn">Gerar 5 conteúdos por página</button>
+          </div>
           <p id="publish-status" class="form-status" aria-live="polite"></p>
         </form>
       </div>
@@ -315,7 +420,7 @@ function initContentModal() {
     status.textContent = 'Salvando conteudo...';
     const result = await createConteudo(payload);
     if (!result.success) {
-      status.textContent = 'Nao foi possivel salvar o conteudo.';
+      status.textContent = `Nao foi possivel salvar o conteudo: ${result.error || 'erro desconhecido'}`;
       return;
     }
 
@@ -325,6 +430,18 @@ function initContentModal() {
     status.textContent = 'Conteudo adicionado.';
     setTimeout(close, 600);
   });
+
+  const seedButton = publishModal.querySelector('#seed-demo-btn');
+  if (seedButton) {
+    seedButton.addEventListener('click', async () => {
+      if (!requireLogin()) return;
+      status.textContent = 'Criando conteúdos de teste...';
+      const result = await seedDemoConteudos({ force: true });
+      status.textContent = result.success
+        ? `Conteúdos de teste criados: ${result.created}.`
+        : `Nao foi possivel criar os testes: ${result.error || 'erro desconhecido'}`;
+    });
+  }
 }
 
 function openButtonModal(button) {
@@ -357,7 +474,10 @@ function matchesFilter(cardType, filterName) {
 function applyActiveFilter() {
   const active = document.querySelector('.filter-btn.active');
   const filter = active ? active.dataset.filter : 'all';
-  document.querySelectorAll('.cards-grid .card, .cards-row .card').forEach(card => {
+  const homePage = document.querySelector('[data-page-section="home"]');
+  if (!homePage) return;
+
+  homePage.querySelectorAll('.cards-grid .card, .cards-row .card').forEach(card => {
     const type = card.dataset.tipo ? card.dataset.tipo.toLowerCase() : '';
     card.style.display = matchesFilter(type, filter) ? '' : 'none';
   });
@@ -365,7 +485,10 @@ function applyActiveFilter() {
 
 function runSearch() {
   const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
-  document.querySelectorAll('.card').forEach(card => {
+  const homePage = document.querySelector('[data-page-section="home"]');
+  if (!homePage) return;
+
+  homePage.querySelectorAll('.card').forEach(card => {
     if (!query) {
       card.style.display = '';
       return;
@@ -410,6 +533,15 @@ function initNavActions() {
       document.getElementById('user-area').scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   }
+
+  pageLinks.forEach(link => {
+    link.addEventListener('click', (event) => {
+      const targetPage = link.dataset.pageLink;
+      if (!targetPage) return;
+      event.preventDefault();
+      navigateToPage(targetPage);
+    });
+  });
 }
 
 function initReveal() {
@@ -427,13 +559,28 @@ function initReveal() {
   reveals.forEach(el => observer.observe(el));
 }
 
+function initPageNavigation() {
+  navigateToPage(getPageNameFromHash(), { updateHash: false });
+
+  window.addEventListener('hashchange', () => {
+    navigateToPage(getPageNameFromHash(), { updateHash: false });
+  });
+}
+
 updateAuthUI();
 initReveal();
 initFeatureButtons();
 initSearchAndFilters();
 initNavActions();
 initContentModal();
+initPageNavigation();
 Promise.all([loadConteudos(), loadFavoritos()]).then(() => {
   renderConteudos();
   renderFavoritos();
 });
+
+window.loadConteudos = loadConteudos;
+window.loadMaterials = loadConteudos;
+window.renderConteudos = renderConteudos;
+window.navigateConteudoPage = navigateToPage;
+window.seedDemoConteudos = seedDemoConteudos;

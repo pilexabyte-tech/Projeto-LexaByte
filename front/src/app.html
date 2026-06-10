@@ -13,10 +13,10 @@
 <nav class="nav">
   <a href="index.html" class="nav-logo">Lexa<span>Byte</span></a>
   <ul class="nav-links">
-    <li><a href="#" class="active">Início</a></li>
-    <li><a href="#">Filmes</a></li>
-    <li><a href="#">Séries</a></li>
-    <li><a href="#">Livros</a></li>
+    <li><a href="#home" class="active" data-page-link="home">Início</a></li>
+    <li><a href="#filmes" data-page-link="filmes">Filmes</a></li>
+    <li><a href="#series" data-page-link="series">Séries</a></li>
+    <li><a href="#livros" data-page-link="livros">Livros</a></li>
   </ul>
   <div class="nav-actions">
     <button type="button" id="nav-favorites" class="nav-cta nav-action-btn">Favoritos</button>
@@ -27,116 +27,159 @@
 
 <div class="app-layout">
 
-  <!-- ===================== FEATURED ===================== -->
-  <section class="featured" aria-label="Destaque">
-    <div class="featured-img-placeholder"></div>
-    <div class="featured-bg"></div>
-    <div class="featured-content">
-      <div class="featured-badge">Em destaque</div>
-      <h1 class="featured-title">Dom Casmurro</h1>
-      <div class="featured-meta">
-        <span>Machado de Assis</span>
-        · 1899 ·
-        <span>Romance</span>
-        · Clássico Brasileiro
-      </div>
-      <p class="featured-desc">Bentinho e Capitu — uma das histórias mais discutidas da literatura brasileira. Ciúme, memória e a dúvida que nunca se resolve.</p>
-      <div class="featured-actions">
-        <button type="button" class="btn-watch" data-modal-open data-modal-title="Dom Casmurro" data-modal-subtitle="Conteúdo exclusivo" data-modal-type="text" data-modal-text="Explore análise de personagens, trechos comentados e curiosidades sobre Machado de Assis diretamente na plataforma.">Acessar</button>
-        <button type="button" class="btn-info">Mais detalhes</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== SEARCH + FILTERS ===================== -->
-  <div class="search-section">
-    <div class="search-bar" role="search">
-      <div class="search-icon">⌕</div>
-      <input
-        type="text"
-        class="search-input"
-        placeholder="buscar filmes, séries, livros..."
-        aria-label="Buscar conteúdo"
-      >
-      <button type="button" class="search-btn" aria-label="Executar busca">Buscar</button>
-    </div>
-    <div class="filters" role="group" aria-label="Filtros de tipo">
-      <span class="filter-label">tipo:</span>
-      <button type="button" class="filter-btn active" data-filter="all">Todos</button>
-      <button type="button" class="filter-btn" data-filter="livro">Livros</button>
-      <button type="button" class="filter-btn" data-filter="filme">Filmes</button>
-      <button type="button" class="filter-btn" data-filter="serie">Séries</button>
-    </div>
-  </div>
-
   <!-- ===================== CONTENT ===================== -->
   <main class="content-area">
-
-    <div class="status-bar">
-      <div class="status-dot"></div>
-      plataforma ativa · conteúdo em português brasileiro
-    </div>
-
-    <!-- SEÇÃO — Em alta -->
-    <section class="content-section reveal">
-      <div class="section-header">
-        <div>
-          <div class="section-tag">curadoria</div>
-          <h2 class="section-heading">Em <em>alta</em> esta semana</h2>
-        </div>
-        <a href="#" class="see-all">Ver todos</a>
-      </div>
-      <div class="cards-grid wide" id="alta-cards">
-        <!-- Cards serão carregados dinamicamente -->
-      </div>
-    </section>
-
-    <div class="divider" style="margin: 0 0 3rem;"></div>
-
-    <!-- SEÇÃO — Clássicos brasileiros -->
-    <section class="content-section reveal">
-      <div class="section-header">
-        <div>
-          <div class="section-tag">literatura</div>
-          <h2 class="section-heading"><em>Clássicos</em> brasileiros</h2>
-        </div>
-        <a href="#" class="see-all">Ver todos</a>
-      </div>
-      <div class="cards-row" role="list" id="classicos-cards">
-        <!-- Cards serão carregados dinamicamente -->
-      </div>
-    </section>
-
-    <div class="divider" style="margin: 0 0 3rem;"></div>
-
-    <!-- SEÇÃO — Área do usuário (login gate) -->
-    <section class="content-section reveal" id="user-area">
-      <div class="section-header">
-        <div>
-          <div class="section-tag">favoritos</div>
-          <h2 class="section-heading">Conteúdos <em>salvos</em></h2>
-        </div>
-        <button type="button" class="btn-info" id="user-area-add">Adicionar Conteúdo</button>
-      </div>
-      <div class="login-gate" id="login-gate">
-        <div class="login-gate-icon">⌗</div>
-        <div class="login-gate-title">Acesso restrito</div>
-        <p class="login-gate-sub">Use Favoritos ou Adicionar Conteúdo para continuar com sua conta.</p>
-      </div>
-      <div class="user-info" id="user-info" style="display: none;">
-        <div class="user-avatar">👤</div>
-        <div class="user-details">
-          <h3 id="user-name">Nome do Usuário</h3>
-          <p id="user-email">email@exemplo.com</p>
-        </div>
-        <div class="user-stats">
-          <div class="stat">
-            <span class="stat-number" id="user-materiais">0</span>
-            <span class="stat-label">Favoritos</span>
+    <section class="content-page" data-page-section="home">
+      <section class="featured" aria-label="Destaque">
+        <div class="featured-img-placeholder"></div>
+        <div class="featured-bg"></div>
+        <div class="featured-content">
+          <div class="featured-badge">Em destaque</div>
+          <h1 class="featured-title">Dom Casmurro</h1>
+          <div class="featured-meta">
+            <span>Machado de Assis</span>
+            · 1899 ·
+            <span>Romance</span>
+            · Clássico Brasileiro
+          </div>
+          <p class="featured-desc">Bentinho e Capitu — uma das histórias mais discutidas da literatura brasileira. Ciúme, memória e a dúvida que nunca se resolve.</p>
+          <div class="featured-actions">
+            <button type="button" class="btn-watch" data-modal-open data-modal-title="Dom Casmurro" data-modal-subtitle="Conteúdo exclusivo" data-modal-type="text" data-modal-text="Explore análise de personagens, trechos comentados e curiosidades sobre Machado de Assis diretamente na plataforma.">Acessar</button>
+            <button type="button" class="btn-info">Mais detalhes</button>
           </div>
         </div>
+      </section>
+
+      <div class="search-section">
+        <div class="search-bar" role="search">
+          <div class="search-icon">⌕</div>
+          <input
+            type="text"
+            class="search-input"
+            placeholder="buscar filmes, séries, livros..."
+            aria-label="Buscar conteúdo"
+          >
+          <button type="button" class="search-btn" aria-label="Executar busca">Buscar</button>
+        </div>
+        <div class="filters" role="group" aria-label="Filtros de tipo">
+          <span class="filter-label">tipo:</span>
+          <button type="button" class="filter-btn active" data-filter="all">Todos</button>
+          <button type="button" class="filter-btn" data-filter="livro">Livros</button>
+          <button type="button" class="filter-btn" data-filter="filme">Filmes</button>
+          <button type="button" class="filter-btn" data-filter="serie">Séries</button>
+        </div>
       </div>
-      <div class="cards-grid wide favorites-grid" id="favorites-cards" style="display: none;"></div>
+
+      <div class="status-bar">
+        <div class="status-dot"></div>
+        plataforma ativa · conteúdo em português brasileiro
+      </div>
+
+      <section class="content-section reveal">
+        <div class="section-header">
+          <div>
+            <div class="section-tag">curadoria</div>
+            <h2 class="section-heading">Em <em>alta</em> esta semana</h2>
+          </div>
+          <button type="button" class="see-all" data-page-link="filmes">Ver filmes</button>
+        </div>
+        <div class="cards-grid wide" id="alta-cards"></div>
+      </section>
+
+      <div class="divider" style="margin: 0 0 3rem;"></div>
+
+      <section class="content-section reveal">
+        <div class="section-header">
+          <div>
+            <div class="section-tag">literatura</div>
+            <h2 class="section-heading"><em>Clássicos</em> brasileiros</h2>
+          </div>
+          <button type="button" class="see-all" data-page-link="livros">Ver livros</button>
+        </div>
+        <div class="cards-row" role="list" id="classicos-cards"></div>
+      </section>
+
+      <div class="divider" style="margin: 0 0 3rem;"></div>
+
+      <section class="content-section reveal" id="user-area">
+        <div class="section-header">
+          <div>
+            <div class="section-tag">favoritos</div>
+            <h2 class="section-heading">Conteúdos <em>salvos</em></h2>
+          </div>
+          <button type="button" class="btn-info" id="user-area-add">Adicionar Conteúdo</button>
+        </div>
+        <div class="login-gate" id="login-gate">
+          <div class="login-gate-icon">⌗</div>
+          <div class="login-gate-title">Acesso restrito</div>
+          <p class="login-gate-sub">Use Favoritos ou Adicionar Conteúdo para continuar com sua conta.</p>
+        </div>
+        <div class="user-info" id="user-info" style="display: none;">
+          <div class="user-avatar">👤</div>
+          <div class="user-details">
+            <h3 id="user-name">Nome do Usuário</h3>
+            <p id="user-email">email@exemplo.com</p>
+          </div>
+          <div class="user-stats">
+            <div class="stat">
+              <span class="stat-number" id="user-materiais">0</span>
+              <span class="stat-label">Favoritos</span>
+            </div>
+          </div>
+        </div>
+        <div class="cards-grid wide favorites-grid" id="favorites-cards" style="display: none;"></div>
+      </section>
+    </section>
+
+    <section class="content-page" data-page-section="filmes" hidden>
+      <div class="status-bar">
+        <div class="status-dot"></div>
+        página de filmes · navegação por conteúdo
+      </div>
+      <section class="content-section reveal">
+        <div class="section-header">
+          <div>
+            <div class="section-tag">cinema</div>
+            <h2 class="section-heading">Filmes em <em>destaque</em></h2>
+          </div>
+          <button type="button" class="see-all" data-page-link="home">Voltar ao início</button>
+        </div>
+        <div class="cards-grid wide" id="filmes-cards"></div>
+      </section>
+    </section>
+
+    <section class="content-page" data-page-section="series" hidden>
+      <div class="status-bar">
+        <div class="status-dot"></div>
+        página de séries · navegação por conteúdo
+      </div>
+      <section class="content-section reveal">
+        <div class="section-header">
+          <div>
+            <div class="section-tag">televisão</div>
+            <h2 class="section-heading">Séries para <em>maratonar</em></h2>
+          </div>
+          <button type="button" class="see-all" data-page-link="home">Voltar ao início</button>
+        </div>
+        <div class="cards-grid wide" id="series-cards"></div>
+      </section>
+    </section>
+
+    <section class="content-page" data-page-section="livros" hidden>
+      <div class="status-bar">
+        <div class="status-dot"></div>
+        página de livros · navegação por conteúdo
+      </div>
+      <section class="content-section reveal">
+        <div class="section-header">
+          <div>
+            <div class="section-tag">literatura</div>
+            <h2 class="section-heading">Livros para <em>explorar</em></h2>
+          </div>
+          <button type="button" class="see-all" data-page-link="home">Voltar ao início</button>
+        </div>
+        <div class="cards-grid wide" id="livros-cards"></div>
+      </section>
     </section>
 
   </main>

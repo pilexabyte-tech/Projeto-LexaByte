@@ -1,5 +1,28 @@
 const API_BASE_URL = window.LEXABYTE_API_BASE_URL || 'https://projeto-lexabyte-production.up.railway.app/api';
 
+function formatApiError(data, fallback = 'Erro desconhecido') {
+    if (!data) return fallback;
+    if (typeof data === 'string') return data;
+    if (Array.isArray(data)) return data.join(' ');
+    if (data.detail) return data.detail;
+    if (data.non_field_errors) {
+        return Array.isArray(data.non_field_errors) ? data.non_field_errors.join(' ') : String(data.non_field_errors);
+    }
+
+    const parts = [];
+    Object.values(data).forEach(value => {
+        if (Array.isArray(value)) {
+            parts.push(value.join(' '));
+        } else if (value && typeof value === 'object') {
+            parts.push(JSON.stringify(value));
+        } else if (value) {
+            parts.push(String(value));
+        }
+    });
+
+    return parts.length ? parts.join(' | ') : JSON.stringify(data);
+}
+
 function getAuthToken() {
     return sessionStorage.getItem('authToken');
 }
@@ -26,7 +49,7 @@ async function login(username, password) {
             sessionStorage.setItem('user', JSON.stringify(data));
             return { success: true, user: data };
         }
-        return { success: false, error: data.detail || data.username || data.password || JSON.stringify(data) };
+        return { success: false, error: formatApiError(data) };
     } catch (error) {
         return { success: false, error: error.message };
     }
@@ -46,7 +69,7 @@ async function register(nome, email, password) {
             sessionStorage.setItem('user', JSON.stringify(data));
             return { success: true, user: data };
         }
-        return { success: false, error: data.username || data.email || data.password || JSON.stringify(data) };
+        return { success: false, error: formatApiError(data) };
     } catch (error) {
         return { success: false, error: error.message };
     }
@@ -131,7 +154,7 @@ async function createConteudo({ titulo, descricao, tipo, capa_url = '', ano = ''
             body: JSON.stringify(body),
         });
         const data = await response.json();
-        return { success: response.ok, conteudo: response.ok ? data : null, error: response.ok ? null : data };
+        return { success: response.ok, conteudo: response.ok ? data : null, error: response.ok ? null : formatApiError(data) };
     } catch (error) {
         return { success: false, error: error.message };
     }
